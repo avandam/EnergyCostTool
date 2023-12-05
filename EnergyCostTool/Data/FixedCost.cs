@@ -1,27 +1,41 @@
 ﻿namespace EnergyCostTool.Data
 {
-    public enum FixedCostType
+    public enum FixedCostTariffType
     {
         Daily = 0,
         Monthly = 1,
+        Yearly = 3
     }
 
-    public enum FixedCostName
+    public enum FixedCostType
     {
-        // TODO: Fill in this enumeration
+        StandingChargeElectricity,
+        StandingChargeGas,
+        TransportCostElectricity,
+        TransportCostGas,
+        DiscountOnEnergyTax
     }
 
+    // TODO: Create a factory for instantiation (maybe reintroduce the enum)
     public class FixedCost
     {
-        public FixedCostName Name { get; private set; }
-        public decimal Price { get; private set; }
-        public FixedCostType Type { get; private set; }
+        public DateTime StartDate { get; internal set; }
+        public FixedCostType CostType { get; internal set; }
+        public double Price { get; internal set; }
+        public FixedCostTariffType TariffType { get; internal set; }
 
-        public FixedCost(FixedCostName name, decimal price, FixedCostType type)
+        // For JSON Serialization
+        public FixedCost()
         {
-            Name = name;
+
+        }
+
+        public FixedCost(DateTime startDate, FixedCostType costType, double price, FixedCostTariffType type)
+        {
+            StartDate = startDate;
+            CostType = costType;
             Price = price;
-            Type = type;
+            TariffType = type;
         }
     }
 }
