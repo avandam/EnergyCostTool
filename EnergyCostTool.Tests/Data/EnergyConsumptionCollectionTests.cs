@@ -40,7 +40,7 @@ namespace EnergyCostTool.Tests.Data
             energyConsumptions.Add(energyConsumption);
             Assert.AreEqual(1, energyConsumptions.Count());
 
-            energyConsumptions.Delete(energyConsumption);
+            energyConsumptions.Delete(energyConsumption.Month);
             Assert.AreEqual(0, energyConsumptions.Count());
         }
 
@@ -50,7 +50,7 @@ namespace EnergyCostTool.Tests.Data
             EnergyConsumptionCollection energyConsumptions = new EnergyConsumptionCollection();
             EnergyConsumption energyConsumption = new EnergyConsumption(new DateTime(2023, 10, 1), 500, 250, 150, 300, 50, 5);
 
-            Assert.Throws<EnergyConsumptionDoesNotExistException>(() =>energyConsumptions.Delete(energyConsumption));
+            Assert.Throws<EnergyConsumptionDoesNotExistException>(() =>energyConsumptions.Delete(energyConsumption.Month));
         }
 
         [Test()]
@@ -63,7 +63,7 @@ namespace EnergyCostTool.Tests.Data
             energyConsumptions.Add(energyConsumption);
             Assert.AreEqual(1, energyConsumptions.Count());
 
-            Assert.Throws<EnergyConsumptionDoesNotExistException>(() => energyConsumptions.Delete(energyConsumption2));
+            Assert.Throws<EnergyConsumptionDoesNotExistException>(() => energyConsumptions.Delete(energyConsumption2.Month));
             Assert.AreEqual(1, energyConsumptions.Count());
         }
 
@@ -145,6 +145,7 @@ namespace EnergyCostTool.Tests.Data
                 Assert.IsTrue(File.Exists("energyConsumptions.dat"));
                 EnergyConsumptionCollection energyConsumptions2 = new EnergyConsumptionCollection();
                 Assert.AreEqual(3, energyConsumptions2.Count());
+                Assert.AreEqual(500, energyConsumptions2.Get(new DateTime(2023, 10, 1)).SolarGeneration);
             }
             finally
             {

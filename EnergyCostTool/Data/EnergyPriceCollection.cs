@@ -26,13 +26,13 @@ namespace EnergyCostTool.Data
             energyPrices = energyPrices.OrderBy(price => price.StartDate).ToList();
         }
 
-        public void Delete(EnergyPrice energyPrice)
+        public void Delete(DateTime startDate)
         {
-            if (!energyPrices.Exists(price => price.StartDate == energyPrice.StartDate))
+            if (!energyPrices.Exists(price => price.StartDate == startDate))
             {
-                throw new EnergyPriceDoesNotExistException($"Cannot delete: EnergyPrice for date {energyPrice.StartDate.ToShortDateString()} does not exist");
+                throw new EnergyPriceDoesNotExistException($"Cannot delete: EnergyPrice for date {startDate.ToShortDateString()} does not exist");
             }
-            energyPrices.Remove(energyPrice);
+            energyPrices.Remove(Get(startDate));
         }
 
         public void Update(EnergyPrice energyPrice)
@@ -44,6 +44,12 @@ namespace EnergyCostTool.Data
 
             energyPrices.Remove(energyPrices.First(price => price.StartDate == energyPrice.StartDate));
             Add(energyPrice);
+        }
+
+
+        public List<EnergyPrice> Get()
+        {
+            return energyPrices;
         }
 
         public EnergyPrice Get(DateTime searchDate)
@@ -64,6 +70,12 @@ namespace EnergyCostTool.Data
 
             return energyPrices.Last(price => price.StartDate <= searchDate);
         }
+
+        public bool ContainsDataFor(DateTime date)
+        {
+            return energyPrices.Exists(consumption => consumption.StartDate == date);
+        }
+
 
         internal int Count()
         {

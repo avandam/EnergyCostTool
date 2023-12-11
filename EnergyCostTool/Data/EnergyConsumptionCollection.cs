@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using EnergyCostTool.Exceptions;
 using System.Text.Json;
 
@@ -26,13 +27,13 @@ namespace EnergyCostTool.Data
             energyConsumptions = energyConsumptions.OrderBy(consumption => consumption.Month).ToList();
         }
 
-        public void Delete(EnergyConsumption energyConsumption)
+        public void Delete(DateTime month)
         {
-            if (!energyConsumptions.Exists(consumption => consumption.Month == energyConsumption.Month))
+            if (!energyConsumptions.Exists(consumption => consumption.Month == month))
             {
-                throw new EnergyConsumptionDoesNotExistException($"Cannot delete: EnergyConsumption for month {energyConsumption.Month.ToShortDateString()} does not exist");
+                throw new EnergyConsumptionDoesNotExistException($"Cannot delete: EnergyConsumption for month {month.ToShortDateString()} does not exist");
             }
-            energyConsumptions.Remove(energyConsumption);
+            energyConsumptions.Remove(Get(month));
         }
 
         public void Update(EnergyConsumption energyConsumption)
@@ -44,6 +45,11 @@ namespace EnergyCostTool.Data
 
             energyConsumptions.Remove(energyConsumptions.First(consumption => consumption.Month == energyConsumption.Month));
             Add(energyConsumption);
+        }
+
+        public List<EnergyConsumption> Get()
+        {
+            return energyConsumptions;
         }
 
         public EnergyConsumption Get(DateTime month)
@@ -59,6 +65,18 @@ namespace EnergyCostTool.Data
             }
 
             return energyConsumptions.First(consumption => consumption.Month == month);
+        }
+
+        public bool ContainsDataFor(DateTime month)
+        {
+            return energyConsumptions.Exists(consumption => consumption.Month == month);
+        }
+
+        public List<EnergyConsumption> GetForYear(int year)
+        {
+            return energyConsumptions.FindAll(energyConsumption => energyConsumption.Month.Year == year)
+                                     .OrderBy(energyConsumption => energyConsumption.Month.Month)
+                                     .ToList();
         }
 
         internal int Count()

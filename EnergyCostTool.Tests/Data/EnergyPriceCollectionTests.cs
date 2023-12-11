@@ -40,7 +40,7 @@ namespace EnergyCostTool.Tests.Data
             energyPrices.Add(energyPrice);
             Assert.AreEqual(1, energyPrices.Count());
 
-            energyPrices.Delete(energyPrice);
+            energyPrices.Delete(energyPrice.StartDate);
             Assert.AreEqual(0, energyPrices.Count());
         }
 
@@ -50,7 +50,7 @@ namespace EnergyCostTool.Tests.Data
             EnergyPriceCollection energyPrices = new EnergyPriceCollection();
             EnergyPrice energyPrice = new EnergyPrice(new DateTime(2023, 10, 1), 1.00, 1.01, 1.02, 1.03, 1.04);
 
-            Assert.Throws<EnergyPriceDoesNotExistException>(() =>energyPrices.Delete(energyPrice));
+            Assert.Throws<EnergyPriceDoesNotExistException>(() =>energyPrices.Delete(energyPrice.StartDate));
         }
 
         [Test()]
@@ -63,7 +63,7 @@ namespace EnergyCostTool.Tests.Data
             energyPrices.Add(energyPrice);
             Assert.AreEqual(1, energyPrices.Count());
 
-            Assert.Throws<EnergyPriceDoesNotExistException>(() => energyPrices.Delete(energyPrice2));
+            Assert.Throws<EnergyPriceDoesNotExistException>(() => energyPrices.Delete(energyPrice2.StartDate));
             Assert.AreEqual(1, energyPrices.Count());
         }
 

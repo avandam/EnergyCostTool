@@ -1,16 +1,20 @@
 ﻿using EnergyCostTool.Exceptions;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace EnergyCostTool.Data
 {
-    public class EnergyConsumption
+    public class EnergyConsumption : INotifyPropertyChanged
     {
-        public DateTime Month { get; private set; }
-        public int SolarGeneration { get; internal set; }
-        public int ElectricityHigh { get; internal set; }
-        public int ReturnElectricityHigh { get; internal set; }
-        public int ElectricityLow { get; internal set; }
-        public int ReturnElectricityLow { get; internal set; }
-        public int Gas { get; internal set; }
+        //[JsonPropertyName("Month")]
+        public DateTime Month { get; set; }
+        //[JsonPropertyName("SolarGeneration")]
+        public int SolarGeneration { get; set; }
+        public int ElectricityHigh { get; set; }
+        public int ReturnElectricityHigh { get; set; }
+        public int ElectricityLow { get; set; }
+        public int ReturnElectricityLow { get; set; }
+        public int Gas { get; set; }
 
         // For JSON Serialization
         public EnergyConsumption()
@@ -31,6 +35,13 @@ namespace EnergyCostTool.Data
             ElectricityLow = electricityLow;
             ReturnElectricityLow = returnElectricityLow;
             Gas = gas;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propName)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
     }
 }

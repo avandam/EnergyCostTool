@@ -1,4 +1,6 @@
-﻿namespace EnergyCostTool.Data
+﻿using System.ComponentModel;
+
+namespace EnergyCostTool.Data
 {
     public enum FixedCostTariffType
     {
@@ -9,20 +11,19 @@
 
     public enum FixedCostType
     {
-        StandingChargeElectricity,
-        StandingChargeGas,
-        TransportCostElectricity,
-        TransportCostGas,
-        DiscountOnEnergyTax
+        [Description("Vastrecht Electra")] StandingChargeElectricity,
+        [Description("Vastrecht Gas")] StandingChargeGas,
+        [Description("Transportkosten Elektra")] TransportCostElectricity,
+        [Description("Transportkosten Gas")] TransportCostGas,
+        [Description("Korting op Energiebelasting")] DiscountOnEnergyTax
     }
 
-    // TODO: Create a factory for instantiation (maybe reintroduce the enum)
     public class FixedCost
     {
-        public DateTime StartDate { get; internal set; }
-        public FixedCostType CostType { get; internal set; }
-        public double Price { get; internal set; }
-        public FixedCostTariffType TariffType { get; internal set; }
+        public DateTime StartDate { get; set; }
+        public FixedCostType CostType { get; set; }
+        public double Price { get; set; }
+        public FixedCostTariffType TariffType { get; set; }
 
         // For JSON Serialization
         public FixedCost()
