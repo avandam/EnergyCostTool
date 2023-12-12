@@ -2,98 +2,108 @@
 using System.Text.Json;
 using EnergyCostTool.Exceptions;
 
-namespace EnergyCostTool.Data
+namespace EnergyCostTool.Data;
+
+public class FixedCostCollection
 {
-    public class FixedCostCollection
+    private List<FixedCost> fixedCosts;
+    private const string Filename = "fixedCosts.dat";
+
+    public FixedCostCollection()
     {
-        private List<FixedCost> fixedCosts;
-        private const string Filename = "fixedCosts.dat";
+        fixedCosts = new List<FixedCost>();
+        Load();
+    }
 
-        public FixedCostCollection()
+    public void Add(FixedCost fixedCost)
+    {
+        if (fixedCosts.Exists(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType))
         {
-            fixedCosts = new List<FixedCost>();
-            Load();
+            throw new FixedCostExistsException($"This fixed cost for {fixedCost.CostType} and date {fixedCost.StartDate.ToShortDateString()} already exists");
         }
 
-        public void Add(FixedCost fixedCost)
-        {
-            if (fixedCosts.Exists(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType))
-            {
-                throw new FixedCostExistsException($"This fixed cost for {fixedCost.CostType} and date {fixedCost.StartDate.ToShortDateString()} already exists");
-            }
+        fixedCosts.Add(fixedCost);
+        fixedCosts = fixedCosts.OrderBy(cost => cost.CostType).ThenBy(cost => cost.StartDate).ToList();
+    }
 
-            fixedCosts.Add(fixedCost);
-            fixedCosts = fixedCosts.OrderBy(cost => cost.CostType).ThenBy(cost => cost.StartDate).ToList();
+    public void Delete(DateTime startDate, FixedCostType costType)
+    {
+        if (!fixedCosts.Exists(price => price.StartDate == startDate && price.CostType == costType))
+        {
+            throw new FixedCostDoesNotExistException($"Cannot delete: FixedCost for date {startDate.ToShortDateString()} and type {costType} does not exist");
+        }
+        fixedCosts.Remove(Get(startDate, costType));
+    }
+
+    public void Update(FixedCost fixedCost)
+    {
+        if (!fixedCosts.Exists(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType))
+        {
+            throw new FixedCostDoesNotExistException($"Cannot update: FixedCost for date {fixedCost.StartDate.ToShortDateString()} does not exist");
         }
 
-        public void Delete(FixedCost fixedCost)
+        fixedCosts.Remove(fixedCosts.First(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType));
+        Add(fixedCost);
+    }
+
+    public List<FixedCost> Get()
+    {
+        return fixedCosts;
+    }
+
+    public FixedCost Get(DateTime searchDate, FixedCostType costType)
+    {
+        if (fixedCosts.Count == 0)
         {
-            if (!fixedCosts.Exists(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType))
-            {
-                throw new FixedCostDoesNotExistException($"Cannot delete: FixedCost for date {fixedCost.StartDate.ToShortDateString()} does not exist");
-            }
-            fixedCosts.Remove(fixedCost);
+            throw new FixedCostNotFoundException("There are no fixed costs available.");
+        }
+        if (searchDate < fixedCosts.First(fixedCost => fixedCost.CostType == costType).StartDate)
+        {
+            throw new FixedCostNotFoundException($"The given date {searchDate.ToShortDateString()} is before the first available fixed cost.");
         }
 
-        public void Update(FixedCost fixedCost)
+        if (searchDate >= fixedCosts.Last(fixedCost => fixedCost.CostType == costType).StartDate)
         {
-            if (!fixedCosts.Exists(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType))
-            {
-                throw new FixedCostDoesNotExistException($"Cannot update: FixedCost for date {fixedCost.StartDate.ToShortDateString()} does not exist");
-            }
-
-            fixedCosts.Remove(fixedCosts.First(price => price.StartDate == fixedCost.StartDate && price.CostType == fixedCost.CostType));
-            Add(fixedCost);
+            return fixedCosts.Last(fixedCost => fixedCost.CostType == costType);
         }
 
-        public FixedCost Get(DateTime searchDate, FixedCostType costType)
+        return fixedCosts.Last(price => price.StartDate <= searchDate && price.CostType == costType);
+    }
+
+    public bool ContainsDataFor(DateTime date, FixedCostType costType)
+    {
+        return fixedCosts.Exists(consumption => consumption.StartDate == date && consumption.CostType == costType);
+    }
+
+
+    internal int Count()
+    {
+        return fixedCosts.Count;
+    }
+
+    public void Save()
+    {
+        try
         {
-            if (fixedCosts.Count == 0)
-            {
-                throw new FixedCostNotFoundException("There are no fixed costs available.");
-            }
-            if (searchDate < fixedCosts.First(fixedCost => fixedCost.CostType == costType).StartDate)
-            {
-                throw new FixedCostNotFoundException($"The given date {searchDate.ToShortDateString()} is before the first available fixed cost.");
-            }
-
-            if (searchDate >= fixedCosts.Last(fixedCost => fixedCost.CostType == costType).StartDate)
-            {
-                return fixedCosts.Last(fixedCost => fixedCost.CostType == costType);
-            }
-
-            return fixedCosts.Last(price => price.StartDate <= searchDate && price.CostType == costType);
+            File.WriteAllText(Filename, JsonSerializer.Serialize(fixedCosts));
         }
-
-        internal int Count()
+        catch (Exception e)
         {
-            return fixedCosts.Count;
+            throw new FileException("Could not save fixed costs", e);
         }
+    }
 
-        public void Save()
+    private void Load()
+    {
+        if (File.Exists(Filename))
         {
             try
             {
-                File.WriteAllText(Filename, JsonSerializer.Serialize(fixedCosts));
+                fixedCosts = JsonSerializer.Deserialize<List<FixedCost>>(File.ReadAllText(Filename)) ?? throw new FileException("File was empty");
             }
             catch (Exception e)
             {
-                throw new FileException("Could not save fixed costs", e);
-            }
-        }
-
-        private void Load()
-        {
-            if (File.Exists(Filename))
-            {
-                try
-                {
-                    fixedCosts = JsonSerializer.Deserialize<List<FixedCost>>(File.ReadAllText(Filename)) ?? throw new FileException("File was empty");
-                }
-                catch (Exception e)
-                {
-                    throw new FileException("Could not load fixed costs", e);
-                }
+                throw new FileException("Could not load fixed costs", e);
             }
         }
     }

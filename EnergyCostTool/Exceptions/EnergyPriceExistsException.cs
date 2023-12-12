@@ -1,15 +1,14 @@
-﻿namespace EnergyCostTool.Exceptions
-{
-    public class EnergyPriceExistsException : Exception
-    {
-        public EnergyPriceExistsException(string message)
-            : base(message)
-        {
-        }
+﻿namespace EnergyCostTool.Exceptions;
 
-        public EnergyPriceExistsException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
+public class EnergyPriceExistsException : Exception
+{
+    public EnergyPriceExistsException(string message)
+        : base(message)
+    {
+    }
+
+    public EnergyPriceExistsException(string message, Exception inner)
+        : base(message, inner)
+    {
     }
 }

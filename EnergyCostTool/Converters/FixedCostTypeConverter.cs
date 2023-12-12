@@ -1,14 +1,15 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using EnergyCostTool.Data;
 
 namespace EnergyCostTool.Converters;
 
-public class DateConverter : IValueConverter
+public class FixedCostTypeConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        DateTime date = (DateTime)value;
-        return date.ToString("yyyy-MM-dd");
+        FixedCostType fixedCostType = (FixedCostType)value;
+        return fixedCostType.GetDescription();
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

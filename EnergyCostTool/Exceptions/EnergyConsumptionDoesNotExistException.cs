@@ -1,15 +1,14 @@
-﻿namespace EnergyCostTool.Exceptions
-{
-    public class EnergyConsumptionDoesNotExistException : Exception
-    {
-        public EnergyConsumptionDoesNotExistException(string message)
-            : base(message)
-        {
-        }
+﻿namespace EnergyCostTool.Exceptions;
 
-        public EnergyConsumptionDoesNotExistException(string message, Exception inner)
-            : base(message, inner)
-        {
-        }
+public class EnergyConsumptionDoesNotExistException : Exception
+{
+    public EnergyConsumptionDoesNotExistException(string message)
+        : base(message)
+    {
+    }
+
+    public EnergyConsumptionDoesNotExistException(string message, Exception inner)
+        : base(message, inner)
+    {
     }
 }

@@ -2,112 +2,111 @@
 using EnergyCostTool.Exceptions;
 using System.Text.Json;
 
-namespace EnergyCostTool.Data
+namespace EnergyCostTool.Data;
+
+public class EnergyPriceCollection
 {
-    public class EnergyPriceCollection
+    private List<EnergyPrice> energyPrices;
+    private const string Filename = "energyPrices.dat";
+
+    public EnergyPriceCollection()
     {
-        private List<EnergyPrice> energyPrices;
-        private const string Filename = "energyPrices.dat";
+        energyPrices = new List<EnergyPrice>();
+        Load();
+    }
 
-        public EnergyPriceCollection()
+    public void Add(EnergyPrice energyPrice)
+    {
+        if (energyPrices.Exists(price => price.StartDate == energyPrice.StartDate))
         {
-            energyPrices = new List<EnergyPrice>();
-            Load();
+            throw new EnergyPriceExistsException($"Cannot add: EnergyPrice for date {energyPrice.StartDate.ToShortDateString()} already exists");
         }
 
-        public void Add(EnergyPrice energyPrice)
-        {
-            if (energyPrices.Exists(price => price.StartDate == energyPrice.StartDate))
-            {
-                throw new EnergyPriceExistsException($"Cannot add: EnergyPrice for date {energyPrice.StartDate.ToShortDateString()} already exists");
-            }
+        energyPrices.Add(energyPrice);
+        energyPrices = energyPrices.OrderBy(price => price.StartDate).ToList();
+    }
 
-            energyPrices.Add(energyPrice);
-            energyPrices = energyPrices.OrderBy(price => price.StartDate).ToList();
+    public void Delete(DateTime startDate)
+    {
+        if (!energyPrices.Exists(price => price.StartDate == startDate))
+        {
+            throw new EnergyPriceDoesNotExistException($"Cannot delete: EnergyPrice for date {startDate.ToShortDateString()} does not exist");
+        }
+        energyPrices.Remove(Get(startDate));
+    }
+
+    public void Update(EnergyPrice energyPrice)
+    {
+        if (!energyPrices.Exists(price => price.StartDate == energyPrice.StartDate))
+        {
+            throw new EnergyPriceDoesNotExistException($"Cannot update: EnergyPrice for date {energyPrice.StartDate.ToShortDateString()} does not exist");
         }
 
-        public void Delete(DateTime startDate)
+        energyPrices.Remove(energyPrices.First(price => price.StartDate == energyPrice.StartDate));
+        Add(energyPrice);
+    }
+
+
+    public List<EnergyPrice> Get()
+    {
+        return energyPrices;
+    }
+
+    public EnergyPrice Get(DateTime searchDate)
+    {
+        if (energyPrices.Count == 0)
         {
-            if (!energyPrices.Exists(price => price.StartDate == startDate))
-            {
-                throw new EnergyPriceDoesNotExistException($"Cannot delete: EnergyPrice for date {startDate.ToShortDateString()} does not exist");
-            }
-            energyPrices.Remove(Get(startDate));
+            throw new EnergyPriceNotFoundException("There are no energy prices available.");
+        }
+        if (searchDate < energyPrices.First().StartDate)
+        {
+            throw new EnergyPriceNotFoundException($"The given date {searchDate.ToShortDateString()} is before the first available energy price.");
         }
 
-        public void Update(EnergyPrice energyPrice)
+        if (searchDate >= energyPrices.Last().StartDate)
         {
-            if (!energyPrices.Exists(price => price.StartDate == energyPrice.StartDate))
-            {
-                throw new EnergyPriceDoesNotExistException($"Cannot update: EnergyPrice for date {energyPrice.StartDate.ToShortDateString()} does not exist");
-            }
-
-            energyPrices.Remove(energyPrices.First(price => price.StartDate == energyPrice.StartDate));
-            Add(energyPrice);
+            return energyPrices.Last();
         }
 
+        return energyPrices.Last(price => price.StartDate <= searchDate);
+    }
 
-        public List<EnergyPrice> Get()
+    public bool ContainsDataFor(DateTime date)
+    {
+        return energyPrices.Exists(consumption => consumption.StartDate == date);
+    }
+
+
+    internal int Count()
+    {
+        return energyPrices.Count;
+    }
+
+    public void Save()
+    {
+        try
         {
-            return energyPrices;
+            File.WriteAllText(Filename, JsonSerializer.Serialize(energyPrices));
         }
-
-        public EnergyPrice Get(DateTime searchDate)
+        catch (Exception e)
         {
-            if (energyPrices.Count == 0)
-            {
-                throw new EnergyPriceNotFoundException("There are no energy prices available.");
-            }
-            if (searchDate < energyPrices.First().StartDate)
-            {
-                throw new EnergyPriceNotFoundException($"The given date {searchDate.ToShortDateString()} is before the first available energy price.");
-            }
-
-            if (searchDate >= energyPrices.Last().StartDate)
-            {
-                return energyPrices.Last();
-            }
-
-            return energyPrices.Last(price => price.StartDate <= searchDate);
+            throw new FileException("Could not save fixed costs", e);
         }
+    }
 
-        public bool ContainsDataFor(DateTime date)
-        {
-            return energyPrices.Exists(consumption => consumption.StartDate == date);
-        }
-
-
-        internal int Count()
-        {
-            return energyPrices.Count;
-        }
-
-        public void Save()
+    private void Load()
+    {
+        if (File.Exists(Filename))
         {
             try
             {
-                File.WriteAllText(Filename, JsonSerializer.Serialize(energyPrices));
+                energyPrices = JsonSerializer.Deserialize<List<EnergyPrice>>(File.ReadAllText(Filename)) ?? throw new FileException("File was empty");
             }
             catch (Exception e)
             {
-                throw new FileException("Could not save fixed costs", e);
+                throw new FileException("Could not load energy prices", e);
             }
         }
-
-        private void Load()
-        {
-            if (File.Exists(Filename))
-            {
-                try
-                {
-                    energyPrices = JsonSerializer.Deserialize<List<EnergyPrice>>(File.ReadAllText(Filename)) ?? throw new FileException("File was empty");
-                }
-                catch (Exception e)
-                {
-                    throw new FileException("Could not load energy prices", e);
-                }
-            }
-        }
-
     }
+
 }
