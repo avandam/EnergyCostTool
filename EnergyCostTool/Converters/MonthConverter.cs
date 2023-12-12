@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-// ReSharper disable NullnessAnnotationConflictWithJetBrainsAnnotations
 
 namespace EnergyCostTool.Converters;
 
@@ -9,6 +8,10 @@ public class MonthConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+        if (value == null)
+        {
+            return "N/A";
+        }
         int month = (int)value;
         switch (month)
         {

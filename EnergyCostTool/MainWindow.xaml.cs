@@ -10,7 +10,7 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class MainWindow : Window, INotifyPropertyChanged
 {
-    EnergyViewModel viewModel;
+    private readonly EnergyViewModel viewModel;
     public ObservableCollection<EnergyConsumption> EnergyConsumptionForCurrentYear { get; protected set; }
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -37,21 +37,21 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void BtnConsumption_Click(object sender, RoutedEventArgs e)
     {
         EnergyConsumptionWindow energyConsumptionWindow = new EnergyConsumptionWindow(viewModel.EnergyConsumptionCollection);
-        energyConsumptionWindow.Closed += (o, args) => InitializeUi();
+        energyConsumptionWindow.Closed += (_, _) => InitializeUi();
         energyConsumptionWindow.Show();
     }
 
     private void BtnEnergyPrices_OnClick(object sender, RoutedEventArgs e)
     {
         EnergyPriceWindow energyPriceWindow = new EnergyPriceWindow(viewModel.EnergyPriceCollection);
-        energyPriceWindow.Closed += (o, args) => InitializeUi();
+        energyPriceWindow.Closed += (_, _) => InitializeUi();
         energyPriceWindow.Show();
     }
         
     private void BtnFixedCosts_OnClick(object sender, RoutedEventArgs e)
     {
         FixedCostWindow fixedCostWindow = new FixedCostWindow(viewModel.FixedCostCollection);
-        fixedCostWindow.Closed += (o, args) => InitializeUi();
+        fixedCostWindow.Closed += (_, _) => InitializeUi();
         fixedCostWindow.Show();
     }
 

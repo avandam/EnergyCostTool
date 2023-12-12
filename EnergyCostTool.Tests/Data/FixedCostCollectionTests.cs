@@ -61,7 +61,7 @@ public class FixedCostCollectionTests
     }
 
     [Test()]
-    public void DeleteFixedCostWhenMoreSamedateFixedCostExistsTest()
+    public void DeleteFixedCostWhenMoreSameDateFixedCostExistsTest()
     {
         FixedCostCollection fixedCosts = new FixedCostCollection();
         FixedCost fixedCost = new FixedCost(new DateTime(2023, 10, 1), FixedCostType.StandingChargeGas, 5.99);
@@ -89,7 +89,6 @@ public class FixedCostCollectionTests
     {
         FixedCostCollection fixedCosts = new FixedCostCollection();
         FixedCost fixedCost = new FixedCost(new DateTime(2023, 10, 1), FixedCostType.StandingChargeGas, 5.99);
-        FixedCost fixedCost2 = new FixedCost(new DateTime(2023, 10, 2), FixedCostType.StandingChargeGas, 6.99);
 
         fixedCosts.Add(fixedCost);
         Assert.AreEqual(1, fixedCosts.Count());

@@ -8,6 +8,10 @@ public class FixedCostTariffTypeConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+        if (value == null)
+        {
+            return "Unknown";
+        }
         FixedCostTariffType fixedCostTariffType = (FixedCostTariffType)value;
         return fixedCostTariffType.GetDescription();
     }

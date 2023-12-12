@@ -67,7 +67,7 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
                 EnableAdd();
             }
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             DisableChanges();
         }

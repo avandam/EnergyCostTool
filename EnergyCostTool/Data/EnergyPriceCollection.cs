@@ -7,7 +7,7 @@ namespace EnergyCostTool.Data;
 public class EnergyPriceCollection
 {
     private List<EnergyPrice> energyPrices;
-    private const string Filename = "energyPrices.dat";
+    private const string filename = "energyPrices.dat";
 
     public EnergyPriceCollection()
     {
@@ -86,7 +86,7 @@ public class EnergyPriceCollection
     {
         try
         {
-            File.WriteAllText(Filename, JsonSerializer.Serialize(energyPrices));
+            File.WriteAllText(filename, JsonSerializer.Serialize(energyPrices));
         }
         catch (Exception e)
         {
@@ -96,11 +96,11 @@ public class EnergyPriceCollection
 
     private void Load()
     {
-        if (File.Exists(Filename))
+        if (File.Exists(filename))
         {
             try
             {
-                energyPrices = JsonSerializer.Deserialize<List<EnergyPrice>>(File.ReadAllText(Filename)) ?? throw new FileException("File was empty");
+                energyPrices = JsonSerializer.Deserialize<List<EnergyPrice>>(File.ReadAllText(filename)) ?? throw new FileException("File was empty");
             }
             catch (Exception e)
             {

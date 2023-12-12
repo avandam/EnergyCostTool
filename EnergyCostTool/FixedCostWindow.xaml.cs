@@ -60,7 +60,8 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     private void TxtPrice_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         TextBox textBox = (TextBox)sender;
-        textBox.Text.Replace('.', ',');
+        textBox.Text = textBox.Text.Replace('.', ',');
+        textBox.CaretIndex = textBox.Text.Length;
     }
         
     private void TxtDate_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -98,7 +99,7 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
                 EnableAdd();
             }
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             DisableChanges();
         }
@@ -130,9 +131,9 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
         try
         {
             DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            FixedCostType fixedCostType = (FixedCostType)CmbType.SelectedItem;
+            FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedItem;
             double price = Convert.ToDouble(TxtPrice.Text);
-            FixedCost fixedCost = new FixedCost(startDate, fixedCostType, price);
+            FixedCost fixedCost = new FixedCost(startDate, fixedCostTypeFromInput, price);
             fixedCostCollection.Add(fixedCost);
             fixedCostCollection.Save();
             InitializeUi();
@@ -149,9 +150,9 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
         try
         {
             DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            FixedCostType fixedCostType = (FixedCostType)CmbType.SelectedItem;
+            FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedItem;
             double price = Convert.ToDouble(TxtPrice.Text);
-            FixedCost fixedCost = new FixedCost(startDate, fixedCostType, price);
+            FixedCost fixedCost = new FixedCost(startDate, fixedCostTypeFromInput, price);
             fixedCostCollection.Update(fixedCost);
             fixedCostCollection.Save();
             InitializeUi();
@@ -167,8 +168,8 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
         try
         {
             DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            FixedCostType fixedCostType = (FixedCostType)CmbType.SelectedItem;
-            fixedCostCollection.Delete(startDate, fixedCostType);
+            FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedItem;
+            fixedCostCollection.Delete(startDate, fixedCostTypeFromInput);
             fixedCostCollection.Save();
             InitializeUi();
         }
@@ -184,7 +185,7 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
         {
             TxtDate.Text = selectedFixedCost.StartDate.ToString("yyyy-MM-dd");
             CmbType.SelectedItem = selectedFixedCost.CostType;
-            TxtPrice.Text = selectedFixedCost.Price.ToString();
+            TxtPrice.Text = selectedFixedCost.Price.ToString(CultureInfo.CurrentCulture);
         }
     }
 

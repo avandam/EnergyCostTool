@@ -13,15 +13,7 @@
     <Window.Resources>
         <global:DateConverter x:Key="DateConverter"/>
         <global:FixedCostTypeConverter x:Key="FixedCostTypeConverter"/>
-        <!--<global:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-        <ObjectDataProvider x:Key="FixedCostTypes"
-                            MethodName="GetValues" 
-                            ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="data:FixedCostType"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>-->
-
+        <global:DetailedCurrencyConverter x:Key="DetailedCurrencyConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -56,7 +48,7 @@
                 <GridView>
                     <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
                     <GridViewColumn Header="Type" Width="90" DisplayMemberBinding="{Binding CostType, Converter={StaticResource FixedCostTypeConverter}}" />
-                    <GridViewColumn Header="Price" Width="90" DisplayMemberBinding="{Binding Price}" />
+                    <GridViewColumn Header="Price" Width="90" DisplayMemberBinding="{Binding Price, Converter={StaticResource DetailedCurrencyConverter}}" />
                     <GridViewColumn Header="Tarief termijn" Width="90" DisplayMemberBinding="{Binding TariffType, Converter={StaticResource FixedCostTypeConverter}}" />
                 </GridView>
             </ListView.View>

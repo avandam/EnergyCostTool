@@ -63,7 +63,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
     private void TxtPrice_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         TextBox textBox = (TextBox)sender;
-        textBox.Text.Replace('.', ',');
+        textBox.Text = textBox.Text.Replace('.', ',');
+        textBox.CaretIndex = textBox.Text.Length;
     }
         
     private void TxtDate_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -90,7 +91,7 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
                 EnableAdd();
             }
         }
-        catch (Exception exception)
+        catch (Exception)
         {
             DisableChanges();
         }
@@ -127,8 +128,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
             double low = Convert.ToDouble(TxtLow.Text);
             double lowT = Convert.ToDouble(TxtLowT.Text);
             double gas = Convert.ToDouble(TxtGas.Text);
-            double electricityCap = ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
-            double gasCap = ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
+            double electricityCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
+            double gasCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
             EnergyPrice energyPrice = new EnergyPrice(startDate, norm, normT, low, lowT, gas, electricityCap, gasCap);
             energyPriceCollection.Add(energyPrice);
             energyPriceCollection.Save();
@@ -151,8 +152,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
             double low = Convert.ToDouble(TxtLow.Text);
             double lowT = Convert.ToDouble(TxtLowT.Text);
             double gas = Convert.ToDouble(TxtGas.Text);
-            double electricityCap = ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
-            double gasCap = ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
+            double electricityCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
+            double gasCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
             EnergyPrice energyPrice = new EnergyPrice(startDate, norm, normT, low, lowT, gas, electricityCap, gasCap);
             energyPriceCollection.Update(energyPrice);
             energyPriceCollection.Save();
@@ -184,15 +185,15 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
         if (LvPrices.SelectedItem is EnergyPrice selectedConsumption)
         {
             TxtDate.Text = selectedConsumption.StartDate.ToString("yyyy-MM-dd");
-            TxtNorm.Text = selectedConsumption.ElectricityHigh.ToString();
-            TxtNormT.Text = selectedConsumption.ReturnElectricityHigh.ToString();
-            TxtLow.Text = selectedConsumption.ElectricityLow.ToString();
-            TxtLowT.Text = selectedConsumption.ReturnElectricityLow.ToString();
-            TxtGas.Text = selectedConsumption.Gas.ToString();
-            ChkCapActive.IsChecked = selectedConsumption.ElectricityCap != 1000;
-            ToggleCapFields(selectedConsumption.ElectricityCap != 1000);
-            TxtElectricityCap.Text = selectedConsumption.ElectricityCap.ToString();
-            TxtGasCap.Text = selectedConsumption.GasCap.ToString();
+            TxtNorm.Text = selectedConsumption.ElectricityHigh.ToString(CultureInfo.InvariantCulture);
+            TxtNormT.Text = selectedConsumption.ReturnElectricityHigh.ToString(CultureInfo.InvariantCulture);
+            TxtLow.Text = selectedConsumption.ElectricityLow.ToString(CultureInfo.InvariantCulture);
+            TxtLowT.Text = selectedConsumption.ReturnElectricityLow.ToString(CultureInfo.InvariantCulture);
+            TxtGas.Text = selectedConsumption.Gas.ToString(CultureInfo.InvariantCulture);
+            ChkCapActive.IsChecked = Math.Abs(selectedConsumption.ElectricityCap - 1000) > 1;
+            ToggleCapFields(Math.Abs(selectedConsumption.ElectricityCap - 1000) > 1);
+            TxtElectricityCap.Text = selectedConsumption.ElectricityCap.ToString(CultureInfo.InvariantCulture);
+            TxtGasCap.Text = selectedConsumption.GasCap.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

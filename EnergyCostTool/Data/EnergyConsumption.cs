@@ -1,9 +1,8 @@
 ﻿using EnergyCostTool.Exceptions;
-using System.ComponentModel;
 
 namespace EnergyCostTool.Data;
 
-public class EnergyConsumption : INotifyPropertyChanged
+public class EnergyConsumption
 {
     public DateTime Month { get; set; }
     public int SolarGeneration { get; set; }
@@ -32,12 +31,5 @@ public class EnergyConsumption : INotifyPropertyChanged
         ElectricityLow = electricityLow;
         ReturnElectricityLow = returnElectricityLow;
         Gas = gas;
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void RaisePropertyChanged(string propName)
-    {
-        PropertyChanged(this, new PropertyChangedEventArgs(propName));
     }
 }

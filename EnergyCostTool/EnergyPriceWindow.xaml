@@ -12,6 +12,7 @@
     <Window.Resources>
         <global:DateConverter x:Key="DateConverter"/>
         <global:CapConverter x:Key="CapConverter"/>
+        <global:DetailedCurrencyConverter x:Key="DetailedCurrencyConverter"/>
 
     </Window.Resources>
     <Grid>
@@ -46,11 +47,11 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
-                    <GridViewColumn Header="Norm" Width="90" DisplayMemberBinding="{Binding ElectricityHigh}" />
-                    <GridViewColumn Header="Norm T" Width="90" DisplayMemberBinding="{Binding ReturnElectricityHigh}" />
-                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ElectricityLow}" />
-                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ReturnElectricityLow}" />
-                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Gas}" />
+                    <GridViewColumn Header="Norm" Width="90" DisplayMemberBinding="{Binding ElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Norm T" Width="90" DisplayMemberBinding="{Binding ReturnElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ReturnElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Gas, Converter={StaticResource DetailedCurrencyConverter}}" />
                     <GridViewColumn Header="Plaf. E" Width="90" DisplayMemberBinding="{Binding ElectricityCap, Converter={StaticResource CapConverter}}" />
                     <GridViewColumn Header="Plaf. G" Width="90" DisplayMemberBinding="{Binding GasCap, Converter={StaticResource CapConverter}}" />
                 </GridView>

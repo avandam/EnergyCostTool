@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace EnergyCostTool.Converters;
 
-public class CapConverter : IValueConverter
+public class DetailedCurrencyConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -11,12 +11,8 @@ public class CapConverter : IValueConverter
         {
             return "N/A";
         }
-        double cap = (double)value;
-        if (Math.Abs(cap - 1000) < 1)
-        {
-            return "N/A";
-        }
-        return cap.ToString(CultureInfo.CurrentCulture);
+        double currency = (double)value;
+        return currency.ToString(CultureInfo.CurrentCulture);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

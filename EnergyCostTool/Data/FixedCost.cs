@@ -15,7 +15,7 @@ public enum FixedCostType
     [Description("Vastrecht Gas")] StandingChargeGas,
     [Description("Transportkosten Elektra")] TransportCostElectricity,
     [Description("Transportkosten Gas")] TransportCostGas,
-    [Description("Korting op Energiebelasting")] DiscountOnEnergyTax
+    [Description("Korting op Energiebelasting")] DiscountOnEnergyTax,
 }
 
 public class FixedCost
