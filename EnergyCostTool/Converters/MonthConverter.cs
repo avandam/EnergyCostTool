@@ -13,35 +13,22 @@ public class MonthConverter : IValueConverter
             return "N/A";
         }
         int month = (int)value;
-        switch (month)
+        return month switch
         {
-            case 1:
-                return "Januari";
-            case 2:
-                return "Februari";
-            case 3:
-                return "Maart";
-            case 4:
-                return "April";
-            case 5:
-                return "Mei";
-            case 6:
-                return "Juni";
-            case 7:
-                return "Juli";
-            case 8:
-                return "Augustus";
-            case 9:
-                return "September";
-            case 10:
-                return "Oktober";
-            case 11:
-                return "November";
-            case 12:
-                return "December";
-            default:
-                return "N/A";
-        }
+            1 => "Januari",
+            2 => "Februari",
+            3 => "Maart",
+            4 => "April",
+            5 => "Mei",
+            6 => "Juni",
+            7 => "Juli",
+            8 => "Augustus",
+            9 => "September",
+            10 => "Oktober",
+            11 => "November",
+            12 => "December",
+            _ => "N/A"
+        };
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

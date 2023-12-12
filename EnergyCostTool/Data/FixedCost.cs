@@ -36,19 +36,14 @@ public class FixedCost
         StartDate = startDate;
         CostType = costType;
         Price = price;
-        switch (costType)
+        TariffType = costType switch
         {
-            case FixedCostType.StandingChargeElectricity:
-            case FixedCostType.StandingChargeGas:
-                TariffType = FixedCostTariffType.Monthly;
-                break;
-            case FixedCostType.TransportCostElectricity:
-            case FixedCostType.TransportCostGas:
-            case FixedCostType.DiscountOnEnergyTax:
-                TariffType = FixedCostTariffType.Daily;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(costType), costType, null);
-        }
+            FixedCostType.StandingChargeElectricity => FixedCostTariffType.Monthly,
+            FixedCostType.StandingChargeGas => FixedCostTariffType.Monthly,
+            FixedCostType.TransportCostElectricity => FixedCostTariffType.Daily,
+            FixedCostType.TransportCostGas => FixedCostTariffType.Daily,
+            FixedCostType.DiscountOnEnergyTax => FixedCostTariffType.Daily,
+            _ => throw new ArgumentOutOfRangeException(nameof(costType), costType, null)
+        };
     }
 }
