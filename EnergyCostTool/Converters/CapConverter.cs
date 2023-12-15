@@ -16,7 +16,7 @@ public class CapConverter : IValueConverter
         {
             return "N/A";
         }
-        return cap.ToString(CultureInfo.CurrentCulture);
+        return "\u20AC " + cap.ToString(CultureInfo.CurrentCulture);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

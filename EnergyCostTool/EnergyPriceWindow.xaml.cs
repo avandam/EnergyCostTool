@@ -27,8 +27,21 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
 
     private void InitializeUi()
     {
+        ClearTextBoxes();
         EnergyPrices = new ObservableCollection<EnergyPrice>(energyPriceCollection.Get().OrderByDescending(price => price.StartDate));
         RaisePropertyChanged("EnergyPrices");
+    }
+
+    private void ClearTextBoxes()
+    {
+        TxtNorm.Text = string.Empty;
+        TxtNormT.Text = string.Empty;
+        TxtLow.Text = string.Empty;
+        TxtLowT.Text = string.Empty;
+        TxtGas.Text = string.Empty;
+        TxtGasCap.Text = string.Empty;
+        TxtElectricityCap.Text = string.Empty;
+
     }
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };

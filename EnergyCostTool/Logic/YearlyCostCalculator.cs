@@ -62,6 +62,17 @@ namespace EnergyCostTool.Logic
         {
             yearlyCostViewModel.NormPrice = 0;
             yearlyCostViewModel.LowPrice = 0;
+            int actualNormUsage = yearlyCostViewModel.NormUsed - yearlyCostViewModel.NormReturned;
+            yearlyCostViewModel.NormPrice = actualNormUsage < 0
+                ? prices.Average(price => price.ReturnElectricityHigh) * actualNormUsage
+                : prices.Average(price => price.ElectricityHigh) * actualNormUsage;
+
+
+            int actualLowUsage = yearlyCostViewModel.LowUsed - yearlyCostViewModel.LowReturned;
+            yearlyCostViewModel.LowPrice = actualLowUsage < 0
+                ? prices.Average(price => price.ReturnElectricityLow) * actualLowUsage
+                : prices.Average(price => price.ElectricityLow) * actualLowUsage;
+
             yearlyCostViewModel.GasPrice = 0;
             foreach (EnergyConsumption energyConsumption in consumptions)
             {
@@ -77,26 +88,22 @@ namespace EnergyCostTool.Logic
                 }
 
                 EnergyPrice price = energyPricesForMonth[0];
-                yearlyCostViewModel.NormPrice += energyConsumption.ElectricityHigh *
-                                                 Math.Min(price.ElectricityHigh, price.ElectricityCap);
-                yearlyCostViewModel.LowPrice += energyConsumption.ElectricityLow *
-                                                Math.Min(price.ElectricityLow, price.ElectricityCap);
                 yearlyCostViewModel.GasPrice += energyConsumption.Gas * Math.Min(price.Gas, price.GasCap);
             }
-
-            // Compute return price
-            yearlyCostViewModel.NormPrice -= (consumptions.Sum(consumption => consumption.ReturnElectricityHigh) *
-                                              prices.Average(price => price.ReturnElectricityHigh));
-            yearlyCostViewModel.LowPrice -= (consumptions.Sum(consumption => consumption.ReturnElectricityLow) *
-                                             prices.Average(price => price.ReturnElectricityLow));
 
             return yearlyCostViewModel;
         }
 
-        private static YearlyCostViewModel ComputeFixedCosts(YearlyCostViewModel yearlyCostViewModel,
-            FixedCostCollection fixedCosts)
+        private static YearlyCostViewModel ComputeFixedCosts(YearlyCostViewModel yearlyCostViewModel, FixedCostCollection fixedCosts)
         {
             yearlyCostViewModel.StandingChargesElectricity = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.StandingChargeElectricity, fixedCosts);
+            yearlyCostViewModel.StandingChargesGas = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.StandingChargeGas, fixedCosts);
+            yearlyCostViewModel.TransportCostElectricity = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.TransportCostElectricity, fixedCosts);
+            yearlyCostViewModel.TransportCostGas = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.TransportCostGas, fixedCosts);
+            yearlyCostViewModel.DiscountOnEnergyTax = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.DiscountOnEnergyTax, fixedCosts);
+            yearlyCostViewModel.PayedDeposits = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.MonthlyDeposit, fixedCosts);
+
+            return yearlyCostViewModel;
         }
 
         private static double ComputeFixedCostForType(int year, FixedCostType fixedCostType,
@@ -113,6 +120,7 @@ namespace EnergyCostTool.Logic
                 case FixedCostTariffType.Daily:
                     return ComputeFixedCostDaily(year, fixedCosts);
                 case FixedCostTariffType.Monthly:
+                    return ComputeFixedCostMonthly(year, fixedCosts);
                     break;
                 case FixedCostTariffType.Yearly:
                 default:
@@ -122,9 +130,32 @@ namespace EnergyCostTool.Logic
             return 0;
         }
 
-        private static double ComputeFixedCostDaily(int year, List<FixedCost> fixedCosts)
+        internal static double ComputeFixedCostMonthly(int year, List<FixedCost> fixedCosts)
         {
-            if (fixedCosts.Count == 1 && fixedCosts[0].StartDate.Year < year)
+            if (fixedCosts.Count == 1)
+            {
+                return 12 * fixedCosts[0].Price;
+            }
+
+            double result = 0;
+
+            for (int i = 0; i < fixedCosts.Count - 1; i++)
+            {
+                int startMonth = fixedCosts[i].StartDate.Year < year ? 1 : fixedCosts[i].StartDate.Month;
+                int numberofMonths = fixedCosts[i + 1].StartDate.Month - startMonth;
+                result += numberofMonths * fixedCosts[i].Price;
+            }
+
+            TimeSpan finalSpan = new DateTime(year, 12, 31).Subtract(fixedCosts.Last().StartDate);
+            result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
+
+            return result;
+
+        }
+
+        internal static double ComputeFixedCostDaily(int year, List<FixedCost> fixedCosts)
+        {
+            if (fixedCosts.Count == 1)
             {
                 int numberOfDays = DateTime.IsLeapYear(year) ? 366 : 365;
                 return numberOfDays * fixedCosts[0].Price;
@@ -139,7 +170,7 @@ namespace EnergyCostTool.Logic
                 result += numberOfDays * fixedCosts[i].Price;
             }
 
-            TimeSpan finalSpan = new DateTime(year, 12, 31).Subtract(fixedCosts.Last().StartDate);
+            TimeSpan finalSpan = new DateTime(year + 1, 1, 1).Subtract(fixedCosts.Last().StartDate);
             result += finalSpan.Days * fixedCosts.Last().Price;
 
             return result;

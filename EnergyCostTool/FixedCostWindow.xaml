@@ -13,6 +13,7 @@
     <Window.Resources>
         <global:DateConverter x:Key="DateConverter"/>
         <global:FixedCostTypeConverter x:Key="FixedCostTypeConverter"/>
+        <global:FixedCostTariffTypeConverter x:Key="FixedCostTariffTypeConverter"/>
         <global:DetailedCurrencyConverter x:Key="DetailedCurrencyConverter"/>
     </Window.Resources>
     <Grid>
@@ -49,7 +50,7 @@
                     <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
                     <GridViewColumn Header="Type" Width="90" DisplayMemberBinding="{Binding CostType, Converter={StaticResource FixedCostTypeConverter}}" />
                     <GridViewColumn Header="Price" Width="90" DisplayMemberBinding="{Binding Price, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Tarief termijn" Width="90" DisplayMemberBinding="{Binding TariffType, Converter={StaticResource FixedCostTypeConverter}}" />
+                    <GridViewColumn Header="Tarief termijn" Width="90" DisplayMemberBinding="{Binding TariffType, Converter={StaticResource FixedCostTariffTypeConverter}}" />
                 </GridView>
             </ListView.View>
         </ListView>
@@ -57,7 +58,7 @@
         <Label Grid.Column="2" Grid.Row="2">Start</Label>
         <TextBox Grid.Column="3" Grid.Row="2" Name="TxtDate" TextChanged="TxtDate_OnTextChanged">yyyy-mm-dd</TextBox>
         <Label Grid.Column="2" Grid.Row="3">Type</Label>
-        <ComboBox Grid.Column="3" Grid.Row="3" Name="CmbType" ItemsSource="{global:EnumValues data:FixedCostType}" DisplayMemberPath="Description" SelectedValuePath="Value" SelectionChanged="CmbType_OnSelectionChanged"></ComboBox>
+        <ComboBox Grid.Column="3" Grid.Row="3" Name="CmbType" ItemsSource="{global:EnumValues data:FixedCostType}" SelectedItem="{Binding Path=FixedCostType}" DisplayMemberPath="Description" SelectedValuePath="Value" SelectionChanged="CmbType_OnSelectionChanged"></ComboBox>
         <Label Grid.Column="2" Grid.Row="4">Prijs</Label>
         <TextBox Grid.Column="3" Grid.Row="4" Name="TxtPrice" PreviewTextInput="PreviewTextInputDecimal" TextChanged="TxtPrice_OnTextChanged"></TextBox>
         <Button Grid.Column="3" Grid.Row="5" Name="BtnAddPrice" Click="BtnAddPrice_OnClick">Voeg Toe</Button>

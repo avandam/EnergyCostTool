@@ -41,6 +41,7 @@ public class FixedCost
         {
             FixedCostType.StandingChargeElectricity => FixedCostTariffType.Monthly,
             FixedCostType.StandingChargeGas => FixedCostTariffType.Monthly,
+            FixedCostType.MonthlyDeposit => FixedCostTariffType.Monthly,
             FixedCostType.TransportCostElectricity => FixedCostTariffType.Daily,
             FixedCostType.TransportCostGas => FixedCostTariffType.Daily,
             FixedCostType.DiscountOnEnergyTax => FixedCostTariffType.Daily,

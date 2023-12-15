@@ -25,6 +25,7 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
 
     private void InitializeUi()
     {
+        ClearTextBoxes();
         EnergyConsumptions = new ObservableCollection<EnergyConsumption>(energyConsumptionCollection.Get().OrderByDescending(consumption => consumption.Month.Year).ThenByDescending(consumption => consumption.Month.Month));
         RaisePropertyChanged("EnergyConsumptions");
     }
@@ -170,5 +171,16 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
             TxtLowT.Text = selectedConsumption.ReturnElectricityLow.ToString();
             TxtGas.Text = selectedConsumption.Gas.ToString();
         }
+    }
+
+    private void ClearTextBoxes()
+    {
+        TxtSolar.Text = string.Empty;
+        TxtNorm.Text = string.Empty;
+        TxtNormT.Text = string.Empty;
+        TxtLow.Text = string.Empty;
+        TxtLowT.Text = string.Empty;
+        TxtGas.Text = string.Empty;
+
     }
 }
