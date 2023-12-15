@@ -189,4 +189,8 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
         }
     }
 
+    private void CmbSelectYear_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 }

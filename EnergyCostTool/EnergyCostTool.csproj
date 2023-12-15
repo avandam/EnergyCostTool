@@ -9,16 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="YearlyCostWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="FixedCostWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="EnergyPriceWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Logic\" />
   </ItemGroup>
 
 </Project>

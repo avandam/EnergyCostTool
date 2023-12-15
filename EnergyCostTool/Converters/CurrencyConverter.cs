@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace EnergyCostTool.Converters;
 
-public class DetailedCurrencyConverter : IValueConverter
+public class CurrencyConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -12,7 +12,7 @@ public class DetailedCurrencyConverter : IValueConverter
             return "N/A";
         }
         double currency = (double)value;
-        return  "\u20AC " + currency.ToString(CultureInfo.CurrentCulture);
+        return Math.Round(currency, 2, MidpointRounding.AwayFromZero).ToString(CultureInfo.CurrentCulture);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

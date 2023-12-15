@@ -42,7 +42,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0">Vaste kosten</Label>
+        <ComboBox Grid.Column="0" Grid.Row="0" Name="CmbSelectYear" SelectionChanged="CmbSelectYear_OnSelectionChanged"></ComboBox>
         <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="14" Margin="10" Name="LvFixedCosts" ItemsSource="{Binding FixedCosts}" SelectionChanged="LvFixedCosts_OnSelectionChanged">
             <ListView.View>
                 <GridView>

@@ -16,6 +16,7 @@ public enum FixedCostType
     [Description("Transportkosten Elektra")] TransportCostElectricity,
     [Description("Transportkosten Gas")] TransportCostGas,
     [Description("Korting op Energiebelasting")] DiscountOnEnergyTax,
+    [Description("Maandelijks voorschot")] MonthlyDeposit,
 }
 
 public class FixedCost

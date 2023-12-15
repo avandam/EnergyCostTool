@@ -1,6 +1,8 @@
-﻿namespace EnergyCostTool.Data;
+﻿using EnergyCostTool.Data;
 
-internal class EnergyViewModel
+namespace EnergyCostTool.ViewModels;
+
+public class EnergyViewModel
 {
     public EnergyConsumptionCollection EnergyConsumptionCollection { get; private set; }
     public EnergyPriceCollection EnergyPriceCollection { get; private set; }

@@ -70,6 +70,22 @@ public class FixedCostCollection
         return fixedCosts.Last(price => price.StartDate <= searchDate && price.CostType == costType);
     }
 
+    public List<FixedCost> Get(int year, FixedCostType costType)
+    {
+        List<FixedCost> result = new List<FixedCost>();
+        if (fixedCosts.Count == 0)
+        {
+            return result;
+        }
+        FixedCost oldCost = fixedCosts.FindLast(fixedCost => fixedCost.StartDate.Year < year && fixedCost.CostType == costType);
+        if (oldCost != null)
+        {
+            result.Add(oldCost);
+        }
+        result.AddRange(fixedCosts.FindAll(fixedCost => fixedCost.StartDate.Year == year && fixedCost.CostType  == costType));
+        return result;
+    }
+
     public bool ContainsDataFor(DateTime date, FixedCostType costType)
     {
         return fixedCosts.Exists(consumption => consumption.StartDate == date && consumption.CostType == costType);

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using EnergyCostTool.Data;
+using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool;
 
@@ -57,7 +58,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnYearlyCost_OnClick(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        YearlyCostWindow yearlyCostWindow = new YearlyCostWindow(viewModel);
+        yearlyCostWindow.Closed += (_, _) => InitializeUi();
+        yearlyCostWindow.Show();
     }
 
     private void BtnEnergyYearlyCost_OnClick(object sender, RoutedEventArgs e)
