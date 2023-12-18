@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Update="SolarInformationWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="YearlyCostWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

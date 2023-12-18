@@ -70,6 +70,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnSolarPanelFinancialResults_OnClick(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        SolarInformationWindow solarInformationWindow = new SolarInformationWindow(viewModel);
+        solarInformationWindow.Closed += (_, _) => InitializeUi();
+        solarInformationWindow.Show();
     }
 }

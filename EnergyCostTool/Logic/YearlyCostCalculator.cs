@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
@@ -84,11 +85,20 @@ namespace EnergyCostTool.Logic
                 }
                 else if (energyPricesForMonth.Count() == 2)
                 {
-                    throw new NotImplementedException("Functionality for split months has not been implemented yet");
-                }
+                    int splitDay = energyPricesForMonth[1].StartDate.Day;
+                    int lastDay = DateTime.DaysInMonth(energyPricesForMonth[1].StartDate.Year, energyPricesForMonth[1].StartDate.Month);
+                    double factor = ((double)splitDay - 1) / lastDay;
+                    int firstPartUsage = Convert.ToInt32(energyConsumption.Gas * factor);
+                    int secondPartUsage = energyConsumption.Gas - firstPartUsage;
 
-                EnergyPrice price = energyPricesForMonth[0];
-                yearlyCostViewModel.GasPrice += energyConsumption.Gas * Math.Min(price.Gas, price.GasCap);
+                    yearlyCostViewModel.GasPrice += firstPartUsage * Math.Min(energyPricesForMonth[0].Gas, energyPricesForMonth[0].GasCap);
+                    yearlyCostViewModel.GasPrice += secondPartUsage * Math.Min(energyPricesForMonth[1].Gas, energyPricesForMonth[1].GasCap);
+                }
+                else
+                {
+                    EnergyPrice price = energyPricesForMonth[0];
+                    yearlyCostViewModel.GasPrice += energyConsumption.Gas * Math.Min(price.Gas, price.GasCap);
+                }
             }
 
             return yearlyCostViewModel;
