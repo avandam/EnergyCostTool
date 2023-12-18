@@ -1,11 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using EnergyCostTool.Data;
 using EnergyCostTool.Logic;
 using EnergyCostTool.ViewModels;
 
@@ -14,7 +8,7 @@ namespace EnergyCostTool;
 /// <summary>
 /// Interaction logic for AddFixedCost.xaml
 /// </summary>
-public partial class YearlyCostWindow : Window, INotifyPropertyChanged
+public partial class YearlyCostWindow : Window
 {
     private readonly EnergyViewModel energyViewModel;
     private YearlyCostViewModel yearlyCostViewModel;
@@ -30,13 +24,6 @@ public partial class YearlyCostWindow : Window, INotifyPropertyChanged
     {
         List<int> years = energyViewModel.EnergyConsumptionCollection.Get().Select(consumption => consumption.Month.Year).Distinct().ToList();
         CmbYear.ItemsSource = years;
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-    private void RaisePropertyChanged(string propName)
-    {
-        PropertyChanged(this, new PropertyChangedEventArgs(propName));
     }
 
     private void CmbYear_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

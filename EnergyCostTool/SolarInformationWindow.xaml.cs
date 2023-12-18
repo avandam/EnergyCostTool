@@ -1,11 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using EnergyCostTool.Data;
+﻿using System.Windows;
 using EnergyCostTool.Logic;
 using EnergyCostTool.ViewModels;
 
@@ -27,7 +20,6 @@ public partial class SolarInformationWindow : Window
 
     private void ShowInformation()
     {
-        List<int> years = energyViewModel.EnergyConsumptionCollection.Get().Select(consumption => consumption.Month.Year).Distinct().ToList();
         SolarInformationViewModel solarInformation = SolarInformationCalculator.ComputeSolarInformation(energyViewModel);
         LblGenerated.Content = solarInformation.SolarGenerated;
         LblDirectlyUsed.Content = solarInformation.SolarDirectlyUsed;
@@ -42,7 +34,6 @@ public partial class SolarInformationWindow : Window
         LblDifferencePrice.Content = "\u20AC " + Math.Round(solarInformation.Difference, 2, MidpointRounding.AwayFromZero);
 
         LblExpectedCutoffDate.Content = $"{solarInformation.NrOfMonthsToReturnInvestment / 12} jaar, {solarInformation.NrOfMonthsToReturnInvestment % 12} maanden";
-
     }
 
 }

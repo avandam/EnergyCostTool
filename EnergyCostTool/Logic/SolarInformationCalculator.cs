@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnergyCostTool.Data;
+﻿using EnergyCostTool.Data;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool.Logic

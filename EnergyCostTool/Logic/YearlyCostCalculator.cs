@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnergyCostTool.Data;
+﻿using EnergyCostTool.Data;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool.Logic
@@ -131,13 +124,10 @@ namespace EnergyCostTool.Logic
                     return ComputeFixedCostDaily(year, fixedCosts);
                 case FixedCostTariffType.Monthly:
                     return ComputeFixedCostMonthly(year, fixedCosts);
-                    break;
                 case FixedCostTariffType.Yearly:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            return 0;
         }
 
         internal static double ComputeFixedCostMonthly(int year, List<FixedCost> fixedCosts)
@@ -156,12 +146,10 @@ namespace EnergyCostTool.Logic
                 result += numberofMonths * fixedCosts[i].Price;
             }
 
-            TimeSpan finalSpan = new DateTime(year, 12, 31).Subtract(fixedCosts.Last().StartDate);
             result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
 
             return result;
-
-        }
+            }
 
         internal static double ComputeFixedCostDaily(int year, List<FixedCost> fixedCosts)
         {
