@@ -9,12 +9,13 @@ public class SolarInformationViewModel
     public double SolarReturnedNormPrice { get; set; }
     public int SolarReturnedLow { get; set; }
     public double SolarReturnedLowPrice { get; set; }
+    public double SolarCostPrice { get; set; }
 
     public double TotalPrice
     {
         get
         {
-            return SolarDirectlyUsedPrice + SolarReturnedLowPrice + SolarReturnedNormPrice;
+            return SolarDirectlyUsedPrice + SolarReturnedLowPrice + SolarReturnedNormPrice + SolarCostPrice;
         }
     }
 
@@ -39,7 +40,7 @@ public class SolarInformationViewModel
         get
         {
             double pricePerMonth = TotalPrice / NrOfMonthsOfSolarPanels;
-            return Convert.ToInt32(PriceOfSolarPanels / pricePerMonth);
+            return Math.Max(0, Convert.ToInt32(PriceOfSolarPanels / pricePerMonth));
         }
     }
     public int NrOfMonthsOfSolarPanels { get; set; }

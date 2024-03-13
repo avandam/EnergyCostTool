@@ -51,6 +51,15 @@ public class FixedCostCollection
         return fixedCosts;
     }
 
+    public List<FixedCost> Get(FixedCostType costType)
+    {
+        if (fixedCosts.Count == 0)
+        {
+            return new List<FixedCost>();
+        }
+        return fixedCosts.FindAll(fixedCost => fixedCost.CostType == costType);
+    }
+
     public FixedCost Get(DateTime searchDate, FixedCostType costType)
     {
         if (fixedCosts.Count == 0)

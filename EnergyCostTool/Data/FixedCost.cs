@@ -6,7 +6,8 @@ public enum FixedCostTariffType
 {
     Daily = 0,
     Monthly = 1,
-    Yearly = 3
+    Yearly = 3,
+    MonthlyCanBeZero = 4
 }
 
 public enum FixedCostType
@@ -17,6 +18,7 @@ public enum FixedCostType
     [Description("Transportkosten Gas")] TransportCostGas,
     [Description("Korting op Energiebelasting")] DiscountOnEnergyTax,
     [Description("Maandelijks voorschot")] MonthlyDeposit,
+    [Description("Terugleverkosten")] SolarCost,
 }
 
 public class FixedCost
@@ -45,6 +47,7 @@ public class FixedCost
             FixedCostType.TransportCostElectricity => FixedCostTariffType.Daily,
             FixedCostType.TransportCostGas => FixedCostTariffType.Daily,
             FixedCostType.DiscountOnEnergyTax => FixedCostTariffType.Daily,
+            FixedCostType.SolarCost => FixedCostTariffType.MonthlyCanBeZero,
             _ => throw new ArgumentOutOfRangeException(nameof(costType), costType, null)
         };
     }

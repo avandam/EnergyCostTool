@@ -17,6 +17,7 @@ public class YearlyCostViewModel
     public double StandingChargesGas { get; set; }
     public double TransportCostGas { get; set; }
     public double DiscountOnEnergyTax { get; set; }
+    public double SolarCost { get; set; }
     public double PayedDeposits { get; set; }
     public double TotalElectricityPrice { get; set; }
     public double TotalGasPrice { get; set; }

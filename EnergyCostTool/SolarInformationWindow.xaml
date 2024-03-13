@@ -59,16 +59,20 @@
         <Label Grid.Column="2" Grid.Row="4" HorizontalContentAlignment="Right" Width="90" Name="LblReturnedLow"/>
         <Label Grid.Column="4" Grid.Row="4" HorizontalContentAlignment="Right" Width="90" Name="LblReturnedLowPrice"/>
 
-        <Label Grid.Column="0" Grid.Row="6">Bespaard</Label>
-        <Label Grid.Column="4" Grid.Row="6" HorizontalContentAlignment="Right" Width="90" Name="LblTotalPrice"/>
+        <Label Grid.Column="0" Grid.Row="5">Terugleverkosten</Label>
+        <Label Grid.Column="4" Grid.Row="5" HorizontalContentAlignment="Right" Width="90" Name="LblSolarCostPrice"/>
 
-        <Label Grid.Column="0" Grid.Row="7">Kosten Zonnepanelen</Label>
-        <Label Grid.Column="4" Grid.Row="7" HorizontalContentAlignment="Right" Width="90" Name="LblCostOfSolarPanels"/>
 
-        <Label Grid.Column="0" Grid.Row="8">Verschil</Label>
-        <Label Grid.Column="4" Grid.Row="8" HorizontalContentAlignment="Right" Width="90" Name="LblDifferencePrice"/>
+        <Label Grid.Column="0" Grid.Row="7">Bespaard</Label>
+        <Label Grid.Column="4" Grid.Row="7" HorizontalContentAlignment="Right" Width="90" Name="LblTotalPrice"/>
 
-        <Label Grid.Column="0" Grid.Row="10">Verwachte terugverdientijd</Label>
-        <Label Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="10" HorizontalContentAlignment="Right" Width="90" Name="LblExpectedCutoffDate"/>
+        <Label Grid.Column="0" Grid.Row="8">Kosten Zonnepanelen</Label>
+        <Label Grid.Column="4" Grid.Row="8" HorizontalContentAlignment="Right" Width="90" Name="LblCostOfSolarPanels"/>
+
+        <Label Grid.Column="0" Grid.Row="9">Verschil</Label>
+        <Label Grid.Column="4" Grid.Row="9" HorizontalContentAlignment="Right" Width="90" Name="LblDifferencePrice"/>
+
+        <Label Grid.Column="0" Grid.Row="11">Verwachte terugverdientijd</Label>
+        <Label Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="11" HorizontalContentAlignment="Right" Width="90" Name="LblExpectedCutoffDate"/>
     </Grid>
 </Window>

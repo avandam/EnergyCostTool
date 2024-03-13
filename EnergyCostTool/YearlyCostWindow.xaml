@@ -47,6 +47,7 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -75,33 +76,37 @@
         <Label Grid.Column="0" Grid.Row="6">Transportkosten</Label>
         <Label Grid.Column="6" Grid.Row="6" HorizontalContentAlignment="Right" Width="90" Name="LblTransportCostElectricity"/>
 
-        <Label Grid.Column="0" Grid.Row="7">Korting Energiebelasting</Label>
-        <Label Grid.Column="6" Grid.Row="7" HorizontalContentAlignment="Right" Width="90" Name="LblDiscountOnEnergyTax"/>
-
-        <Label Grid.Column="0" Grid.Row="9">Gas</Label>
-        <Label Grid.Column="2" Grid.Row="9" HorizontalContentAlignment="Right" Width="90" Name="LblGasUsed"/>
-        <Label Grid.Column="6" Grid.Row="9" HorizontalContentAlignment="Right" Width="90" Name="LblGasPrice"/>
-
-        <Label Grid.Column="0" Grid.Row="10">Vastrecht</Label>
-        <Label Grid.Column="6" Grid.Row="10" HorizontalContentAlignment="Right" Width="90" Name="LblStandingChargeGas"/>
-
-        <Label Grid.Column="0" Grid.Row="11">Transportkosten</Label>
-        <Label Grid.Column="6" Grid.Row="11" HorizontalContentAlignment="Right" Width="90" Name="LblTransportCostGas"/>
-
-        <Label Grid.Column="0" Grid.Row="13">Subtotaal Electriciteit</Label>
-        <Label Grid.Column="6" Grid.Row="13" HorizontalContentAlignment="Right" Width="90" Name="LblTotalElectricity"></Label>
-        <Label Grid.Column="0" Grid.Row="14">Subtotaal Gas</Label>
-        <Label Grid.Column="6" Grid.Row="14" HorizontalContentAlignment="Right" Width="90" Name="LblTotalGas"></Label>
+        <Label Grid.Column="0" Grid.Row="7">TerugleverKosten</Label>
+        <Label Grid.Column="6" Grid.Row="7" HorizontalContentAlignment="Right" Width="90" Name="LblSolarCost"/>
 
 
-        <Label Grid.Column="0" Grid.Row="16">Totaal</Label>
-        <Label Grid.Column="6" Grid.Row="16" HorizontalContentAlignment="Right" Width="90" Name="LblTotal"></Label>
+        <Label Grid.Column="0" Grid.Row="8">Korting Energiebelasting</Label>
+        <Label Grid.Column="6" Grid.Row="8" HorizontalContentAlignment="Right" Width="90" Name="LblDiscountOnEnergyTax"/>
 
-        <Label Grid.Column="0" Grid.Row="17">Betaalde voorschotten</Label>
-        <Label Grid.Column="6" Grid.Row="17" HorizontalContentAlignment="Right" Width="90" Name="LblPayedDeposits"/>
+        <Label Grid.Column="0" Grid.Row="10">Gas</Label>
+        <Label Grid.Column="2" Grid.Row="10" HorizontalContentAlignment="Right" Width="90" Name="LblGasUsed"/>
+        <Label Grid.Column="6" Grid.Row="10" HorizontalContentAlignment="Right" Width="90" Name="LblGasPrice"/>
+
+        <Label Grid.Column="0" Grid.Row="11">Vastrecht</Label>
+        <Label Grid.Column="6" Grid.Row="11" HorizontalContentAlignment="Right" Width="90" Name="LblStandingChargeGas"/>
+
+        <Label Grid.Column="0" Grid.Row="12">Transportkosten</Label>
+        <Label Grid.Column="6" Grid.Row="12" HorizontalContentAlignment="Right" Width="90" Name="LblTransportCostGas"/>
+
+        <Label Grid.Column="0" Grid.Row="14">Subtotaal Electriciteit</Label>
+        <Label Grid.Column="6" Grid.Row="14" HorizontalContentAlignment="Right" Width="90" Name="LblTotalElectricity"></Label>
+        <Label Grid.Column="0" Grid.Row="15">Subtotaal Gas</Label>
+        <Label Grid.Column="6" Grid.Row="15" HorizontalContentAlignment="Right" Width="90" Name="LblTotalGas"></Label>
+
+
+        <Label Grid.Column="0" Grid.Row="17">Totaal</Label>
+        <Label Grid.Column="6" Grid.Row="17" HorizontalContentAlignment="Right" Width="90" Name="LblTotal"></Label>
+
+        <Label Grid.Column="0" Grid.Row="18">Betaalde voorschotten</Label>
+        <Label Grid.Column="6" Grid.Row="18" HorizontalContentAlignment="Right" Width="90" Name="LblPayedDeposits"/>
         
-        <Label Grid.Column="0" Grid.Row="18">Verschil</Label>
-        <Label Grid.Column="6" Grid.Row="18" HorizontalContentAlignment="Right" Width="90" Name="LblDifference"/>
+        <Label Grid.Column="0" Grid.Row="19">Verschil</Label>
+        <Label Grid.Column="6" Grid.Row="19" HorizontalContentAlignment="Right" Width="90" Name="LblDifference"/>
 
 
     </Grid>

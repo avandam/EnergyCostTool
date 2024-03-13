@@ -28,6 +28,7 @@ public partial class SolarInformationWindow : Window
         LblReturnedNormPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarReturnedNormPrice, 2, MidpointRounding.AwayFromZero);
         LblReturnedLow.Content = solarInformation.SolarReturnedLow;
         LblReturnedLowPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarReturnedLowPrice, 2, MidpointRounding.AwayFromZero);
+        LblSolarCostPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarCostPrice, 2, MidpointRounding.AwayFromZero);
 
         LblTotalPrice.Content = "\u20AC " + Math.Round(solarInformation.TotalPrice, 2, MidpointRounding.AwayFromZero);
         LblCostOfSolarPanels.Content = "\u20AC " + Math.Round(solarInformation.PriceOfSolarPanels, 2, MidpointRounding.AwayFromZero);

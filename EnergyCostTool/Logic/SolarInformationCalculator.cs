@@ -11,11 +11,44 @@ namespace EnergyCostTool.Logic
 
             solarInformation.SolarGenerated = energyData.EnergyConsumptionCollection.Get().Sum(consumption => consumption.SolarGeneration);
             solarInformation.NrOfMonthsOfSolarPanels = energyData.EnergyConsumptionCollection.Get().Count(consumption => consumption.SolarGeneration > 0);
+            solarInformation.SolarCostPrice = ComputeSolarCostPrice(energyData.FixedCostCollection.Get(FixedCostType.SolarCost));
 
             // Compute usage and prices
             solarInformation = ComputeDetailedInformation(solarInformation, energyData);
 
             return solarInformation;
+        }
+
+        private static double ComputeSolarCostPrice(List<FixedCost> solarCosts)
+        {
+            double price = 0.0;
+            if (solarCosts.Count == 0)
+            {
+                return 0.0;
+            }
+
+            for (int i = 0; i < solarCosts.Count; i++)
+            {
+                DateTime startDate = solarCosts[i].StartDate;
+                DateTime endDate = i + 1 == solarCosts.Count ? DateTime.Now : solarCosts[i+1].StartDate;
+                int nrOfMonths = GetNrOfMonths(startDate, endDate);
+
+                price += solarCosts[0].Price * nrOfMonths;
+            }
+
+            return price;
+        }
+
+        public static int GetNrOfMonths(DateTime startDate, DateTime endDate)
+        {
+            int nrOfMonths = 1;
+
+            while (startDate.Year != endDate.Year || startDate.Month != endDate.Month)
+            {
+                nrOfMonths++;
+                startDate = startDate.AddMonths(1);
+            }
+            return nrOfMonths;
         }
 
         private static SolarInformationViewModel ComputeDetailedInformation(SolarInformationViewModel solarInformation, EnergyViewModel energyData)
@@ -26,6 +59,8 @@ namespace EnergyCostTool.Logic
             solarInformation.SolarReturnedNormPrice = 0.0;
             solarInformation.SolarReturnedLow = 0;
             solarInformation.SolarReturnedLowPrice = 0.0;
+            solarInformation.SolarCostPrice = 0.0;
+
 
             foreach (EnergyConsumption energyConsumption in energyData.EnergyConsumptionCollection.Get().FindAll(consumption => consumption.SolarGeneration > 0))
             {

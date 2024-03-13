@@ -25,7 +25,8 @@ namespace EnergyCostTool.Logic
                                                         yearlyCostViewModel.LowPrice +
                                                         yearlyCostViewModel.StandingChargesElectricity +
                                                         yearlyCostViewModel.TransportCostElectricity +
-                                                        yearlyCostViewModel.DiscountOnEnergyTax;
+                                                        yearlyCostViewModel.DiscountOnEnergyTax + 
+                                                        yearlyCostViewModel.SolarCost;
 
             yearlyCostViewModel.TotalGasPrice = yearlyCostViewModel.GasPrice + yearlyCostViewModel.StandingChargesGas +
                                                 yearlyCostViewModel.TransportCostGas;
@@ -105,6 +106,7 @@ namespace EnergyCostTool.Logic
             yearlyCostViewModel.TransportCostGas = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.TransportCostGas, fixedCosts);
             yearlyCostViewModel.DiscountOnEnergyTax = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.DiscountOnEnergyTax, fixedCosts);
             yearlyCostViewModel.PayedDeposits = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.MonthlyDeposit, fixedCosts);
+            yearlyCostViewModel.SolarCost = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.SolarCost, fixedCosts);
 
             return yearlyCostViewModel;
         }
@@ -115,6 +117,10 @@ namespace EnergyCostTool.Logic
             List<FixedCost> fixedCosts = fixedCostsInput.Get(year, fixedCostType);
             if (fixedCosts.Count == 0)
             {
+                if (fixedCostType == FixedCostType.SolarCost)
+                {
+                    return 0;
+                }
                 throw new ArgumentException($"No cost found for {fixedCostType}");
             }
 
@@ -124,6 +130,8 @@ namespace EnergyCostTool.Logic
                     return ComputeFixedCostDaily(year, fixedCosts);
                 case FixedCostTariffType.Monthly:
                     return ComputeFixedCostMonthly(year, fixedCosts);
+                case FixedCostTariffType.MonthlyCanBeZero:
+                    return ComputeFixedCostMonthlyCanBeZero(year, fixedCosts);
                 case FixedCostTariffType.Yearly:
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -149,7 +157,24 @@ namespace EnergyCostTool.Logic
             result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
 
             return result;
+        }
+
+        internal static double ComputeFixedCostMonthlyCanBeZero(int year, List<FixedCost> fixedCosts)
+        {
+            double result = 0;
+
+            for (int i = 0; i < fixedCosts.Count - 1; i++)
+            {
+                int startMonth = fixedCosts[i].StartDate.Year < year ? 1 : fixedCosts[i].StartDate.Month;
+                int numberofMonths = fixedCosts[i + 1].StartDate.Month - startMonth;
+                result += numberofMonths * fixedCosts[i].Price;
             }
+
+            result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
+
+            return result;
+        }
+
 
         internal static double ComputeFixedCostDaily(int year, List<FixedCost> fixedCosts)
         {

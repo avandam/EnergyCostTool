@@ -44,6 +44,7 @@ public partial class YearlyCostWindow : Window
 
             LblStandingChargeElectricity.Content = "\u20AC " + Math.Round(yearlyCostViewModel.StandingChargesElectricity, 2, MidpointRounding.AwayFromZero);
             LblTransportCostElectricity.Content = "\u20AC " + Math.Round(yearlyCostViewModel.TransportCostElectricity, 2, MidpointRounding.AwayFromZero);
+            LblSolarCost.Content = "\u20AC " + Math.Round(yearlyCostViewModel.SolarCost, 2, MidpointRounding.AwayFromZero);
             LblDiscountOnEnergyTax.Content = "\u20AC " + Math.Round(yearlyCostViewModel.DiscountOnEnergyTax, 2, MidpointRounding.AwayFromZero);
 
             LblGasUsed.Content = yearlyCostViewModel.GasUsed.ToString();
