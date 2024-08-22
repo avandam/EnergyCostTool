@@ -31,7 +31,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void InitializeUi()
     {
         EnergyConsumptionForCurrentYear =
-            new ObservableCollection<EnergyConsumption>(viewModel.EnergyConsumptionCollection.GetForYear(2023));
+            new ObservableCollection<EnergyConsumption>(viewModel.EnergyConsumptionCollection.GetForYear(DateTime.Now.Year));
         RaisePropertyChanged("EnergyConsumptionForCurrentYear");
     }
 

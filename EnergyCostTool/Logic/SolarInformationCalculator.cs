@@ -33,7 +33,7 @@ namespace EnergyCostTool.Logic
                 DateTime endDate = i + 1 == solarCosts.Count ? DateTime.Now : solarCosts[i+1].StartDate;
                 int nrOfMonths = GetNrOfMonths(startDate, endDate);
 
-                price += solarCosts[0].Price * nrOfMonths;
+                price += -solarCosts[0].Price * nrOfMonths;
             }
 
             return price;
@@ -59,7 +59,6 @@ namespace EnergyCostTool.Logic
             solarInformation.SolarReturnedNormPrice = 0.0;
             solarInformation.SolarReturnedLow = 0;
             solarInformation.SolarReturnedLowPrice = 0.0;
-            solarInformation.SolarCostPrice = 0.0;
 
 
             foreach (EnergyConsumption energyConsumption in energyData.EnergyConsumptionCollection.Get().FindAll(consumption => consumption.SolarGeneration > 0))
