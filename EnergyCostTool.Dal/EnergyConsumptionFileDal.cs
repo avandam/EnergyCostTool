@@ -22,7 +22,7 @@ namespace EnergyCostTool.Dal
 
         internal static List<EnergyConsumption> Load()
         {
-            if (File.Exists(filename))
+            if (!File.Exists(filename))
             {
                 throw new FileException("Could not find database file");
             }

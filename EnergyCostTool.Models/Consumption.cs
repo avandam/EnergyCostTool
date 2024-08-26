@@ -9,12 +9,6 @@ public class Consumption
     public int ReturnElectricityLow { get; private set; }
     public int Gas { get; private set; }
 
-    // For JSON Serialization
-    public Consumption()
-    {
-
-    }
-
     public Consumption(int solarGeneration, int electricityHigh, int returnElectricityHigh, int electricityLow, int returnElectricityLow, int gas)
     {
         SolarGeneration = solarGeneration;

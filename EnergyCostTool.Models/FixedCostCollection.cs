@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
+using EnergyCostTool.Models.Enumerations;
 using EnergyCostTool.Models.Exceptions;
 
 namespace EnergyCostTool.Models;

@@ -1,4 +1,5 @@
 ﻿using EnergyCostTool.Models;
+using EnergyCostTool.Models.Enumerations;
 using EnergyCostTool.Models.Exceptions;
 using NUnit.Framework;
 

@@ -38,7 +38,7 @@ public class EnergyPrice
         GasCap = gasCap;
     }
 
-    public EnergyPrice(DateTime startDate, Price price)
+    public EnergyPrice(DateTime startDate, Tariff price)
     {
         StartDate = startDate;
         ElectricityHigh = price.ElectricityHigh;
@@ -51,8 +51,8 @@ public class EnergyPrice
 
     }
 
-    public Price ConvertToPrice()
+    public Tariff ConvertToPrice()
     {
-        return new Price(ElectricityHigh, ReturnElectricityHigh, ElectricityLow, ReturnElectricityLow, Gas, ElectricityCap, GasCap);
+        return new Tariff(ElectricityHigh, ReturnElectricityHigh, ElectricityLow, ReturnElectricityLow, Gas, ElectricityCap, GasCap);
     }
 }

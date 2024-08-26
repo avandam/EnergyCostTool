@@ -1,4 +1,6 @@
-﻿using EnergyCostTool.Models.Exceptions;
+﻿using EnergyCostTool.Models.Enumerations;
+using EnergyCostTool.Models.Exceptions;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
 namespace EnergyCostTool.Models
@@ -19,7 +21,7 @@ namespace EnergyCostTool.Models
 
         public ReadOnlyCollection<EnergyMonth> Get()
         {
-            return energyMonths.AsReadOnly();
+            return energyMonths.OrderByDescending(energyMonth => energyMonth.Month).ToList().AsReadOnly();
         }
 
         public void AddOrUpdateEnergyMonth(DateTime month, Consumption consumption)
@@ -35,7 +37,19 @@ namespace EnergyCostTool.Models
             energyMonths.OrderByDescending(eMonth => eMonth.Month);
         }
         
-        public void AddOrUpdateEnergyMonth(DateTime month, Price price)
+        public void AddOrUpdateEnergyMonth(DateTime month, Tariff tariff)
+        {
+            if (!energyMonths.Exists(eMonth => eMonth.Month == month))
+            {
+                energyMonths.Add(new EnergyMonth(month, tariff));
+            }
+            else
+            {
+                energyMonths.Find(eMonth => eMonth.Month == month).AddOrUpdate(tariff);
+            }
+        }
+
+        public void AddOrUpdateEnergyMonth(DateTime month, FixedPrice price)
         {
             if (!energyMonths.Exists(eMonth => eMonth.Month == month))
             {
@@ -45,7 +59,6 @@ namespace EnergyCostTool.Models
             {
                 energyMonths.Find(eMonth => eMonth.Month == month).AddOrUpdate(price);
             }
-            energyMonths.OrderByDescending(eMonth => eMonth.Month);
         }
 
         public void DeleteEnergyMonth(DateTime month)
@@ -54,7 +67,6 @@ namespace EnergyCostTool.Models
             {
                 throw new EnergyMonthNotFoundException($"EnergyMonth {month.Month}:{month.Year} not found");
             }
-            
             energyMonths.Remove(energyMonths.Find(eMonth => eMonth.Month == month));
         }
     }

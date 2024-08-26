@@ -1,6 +1,6 @@
 ﻿namespace EnergyCostTool.Models;
 
-public class Price
+public class Tariff
 {
     public double ElectricityHigh { get; set; }
     public double ReturnElectricityHigh { get; set; }
@@ -10,20 +10,14 @@ public class Price
     public double ElectricityCap { get; set; }
     public double GasCap { get; set; }
         
-    // For JSON Serialization
-    public Price()
-    {
-
-    }
-
-    // By default there is no price cap. In that case, set them to the max value, such that the regular price is always selected.
-    public Price(double electricityHigh, double returnElectricityHigh, double electricityLow, double returnElectricityLow, double gas)
+    // By default there is no price cap. In that case, set them to an unrealisitcly large value, such that the regular price is always selected.
+    public Tariff(double electricityHigh, double returnElectricityHigh, double electricityLow, double returnElectricityLow, double gas)
         : this (electricityHigh, returnElectricityHigh, electricityLow, returnElectricityLow, gas, 1000, 1000)
     {
          
     }
 
-    public Price(double electricityHigh, double returnElectricityHigh, double electricityLow, double returnElectricityLow, double gas, double electricityCap, double gasCap)
+    public Tariff(double electricityHigh, double returnElectricityHigh, double electricityLow, double returnElectricityLow, double gas, double electricityCap, double gasCap)
     {
         ElectricityHigh = electricityHigh;
         ReturnElectricityHigh = returnElectricityHigh;

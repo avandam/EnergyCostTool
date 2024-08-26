@@ -57,9 +57,9 @@ namespace EnergyCostTool.Dal
                 {
                     energyConsumptions.Add(new EnergyConsumption(energyMonth.Month, energyMonth.Consumption));
                 }
-                if (energyMonth.Price != null)
+                if (energyMonth.Tariff != null)
                 {
-                    energyPrices.Add(new EnergyPrice(energyMonth.Month, energyMonth.Price));
+                    energyPrices.Add(new EnergyPrice(energyMonth.Month, energyMonth.Tariff));
                 }    
             }
 

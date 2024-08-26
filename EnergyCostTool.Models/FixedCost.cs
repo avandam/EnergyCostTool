@@ -1,25 +1,6 @@
-﻿using System.ComponentModel;
+﻿using EnergyCostTool.Models.Enumerations;
 
 namespace EnergyCostTool.Models;
-
-public enum FixedCostTariffType
-{
-    Daily = 0,
-    Monthly = 1,
-    Yearly = 3,
-    MonthlyCanBeZero = 4
-}
-
-public enum FixedCostType
-{
-    [Description("Vastrecht Electra")] StandingChargeElectricity,
-    [Description("Vastrecht Gas")] StandingChargeGas,
-    [Description("Transportkosten Elektra")] TransportCostElectricity,
-    [Description("Transportkosten Gas")] TransportCostGas,
-    [Description("Korting op Energiebelasting")] DiscountOnEnergyTax,
-    [Description("Maandelijks voorschot")] MonthlyDeposit,
-    [Description("Terugleverkosten")] SolarCost,
-}
 
 public class FixedCost
 {
