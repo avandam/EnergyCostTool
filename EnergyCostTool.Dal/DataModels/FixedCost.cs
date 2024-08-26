@@ -1,4 +1,5 @@
 ﻿using EnergyCostTool.Models;
+using EnergyCostTool.Models.Enumerations;
 using System.ComponentModel;
 
 namespace EnergyCostTool.Dal.DataModels;
