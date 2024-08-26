@@ -51,7 +51,7 @@ public class EnergyPrice
 
     }
 
-    public Tariff ConvertToPrice()
+    public Tariff ConvertToTariff() 
     {
         return new Tariff(ElectricityHigh, ReturnElectricityHigh, ElectricityLow, ReturnElectricityLow, Gas, ElectricityCap, GasCap);
     }

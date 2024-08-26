@@ -43,12 +43,12 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Maand" Width="90" DisplayMemberBinding="{Binding Month.Month, Converter={StaticResource MonthConverter}}" />
-                    <GridViewColumn Header="Opwekking" Width="90" DisplayMemberBinding="{Binding SolarGeneration}" />
-                    <GridViewColumn Header="Normaal" Width="90" DisplayMemberBinding="{Binding ElectricityHigh}" />
-                    <GridViewColumn Header="Normaal Terug" Width="90" DisplayMemberBinding="{Binding ReturnElectricityHigh}" />
-                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ElectricityLow}" />
-                    <GridViewColumn Header="Dal Terug" Width="90" DisplayMemberBinding="{Binding ReturnElectricityLow}" />
-                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Gas}" />
+                    <GridViewColumn Header="Opwekking" Width="90" DisplayMemberBinding="{Binding Consumption.SolarGeneration}" />
+                    <GridViewColumn Header="Normaal" Width="90" DisplayMemberBinding="{Binding Consumption.ElectricityHigh}" />
+                    <GridViewColumn Header="Normaal Terug" Width="90" DisplayMemberBinding="{Binding Consumption.ReturnElectricityHigh}" />
+                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding Consumption.ElectricityLow}" />
+                    <GridViewColumn Header="Dal Terug" Width="90" DisplayMemberBinding="{Binding Consumption.ReturnElectricityLow}" />
+                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Consumption.Gas}" />
                 </GridView>
             </ListView.View>
         </ListView>

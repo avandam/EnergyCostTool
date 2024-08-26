@@ -10,6 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EnergyCostTool.Dal\EnergyCostTool.Dal.csproj" />
+    <ProjectReference Include="..\EnergyCostTool.Models\EnergyCostTool.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="SolarInformationWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

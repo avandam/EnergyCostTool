@@ -2,20 +2,14 @@
 
 namespace EnergyCostTool.Models;
 
-public class FixedCost
+public class StandardCost
 {
     public DateTime StartDate { get; private set; }
     public FixedCostType CostType { get; private set; }
     public double Price { get; private set; }
     public FixedCostTariffType TariffType { get; private set; }
 
-    // For JSON Serialization
-    public FixedCost()
-    {
-
-    }
-
-    public FixedCost(DateTime startDate, FixedCostType costType, double price)
+    public StandardCost(DateTime startDate, FixedCostType costType, double price)
     {
         StartDate = startDate;
         CostType = costType;

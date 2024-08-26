@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
-using EnergyCostTool.Data;
+using EnergyCostTool.Dal;
+using EnergyCostTool.Models;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool;
@@ -12,7 +13,8 @@ namespace EnergyCostTool;
 public partial class MainWindow : Window, INotifyPropertyChanged
 {
     private readonly EnergyViewModel viewModel;
-    public ObservableCollection<EnergyConsumption> EnergyConsumptionForCurrentYear { get; protected set; }
+
+    public ObservableCollection<EnergyMonth> EnergyConsumptionForCurrentYear { get; protected set; }
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
@@ -31,7 +33,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void InitializeUi()
     {
         EnergyConsumptionForCurrentYear =
-            new ObservableCollection<EnergyConsumption>(viewModel.EnergyConsumptionCollection.GetForYear(DateTime.Now.Year));
+            new ObservableCollection<EnergyMonth>(Database.GetEnergyConsumptionForYear(DateTime.Now.Year).Get());
         RaisePropertyChanged("EnergyConsumptionForCurrentYear");
     }
 

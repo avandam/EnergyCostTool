@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EnergyCostTool.Models;
 using EnergyCostTool.Dal.DataModels;
+using EnergyCostTool.Models.Enumerations;
 
 namespace EnergyCostTool.Dal.Tests
 {
@@ -15,6 +16,7 @@ namespace EnergyCostTool.Dal.Tests
     {
         private const string pricesFilename = "energyPrices.dat";
         private const string consumptionsFilename = "energyConsumptions.dat";
+        private const string fixedCostsFilename = "fixedCosts.dat";
 
         [Test()]
         public void ConvertToEnergyMonthCollectionTest()
@@ -66,6 +68,40 @@ namespace EnergyCostTool.Dal.Tests
         }
 
         [Test()]
+        public void GetConsumptionForYearTest()
+        {
+            EnergyMonthCollection energyMonths = new EnergyMonthCollection();
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2024, 11, 1), new Consumption(100, 200, 300, 400, 500, 600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2024, 12, 1), new Consumption(1100, 1200, 1300, 1400, 1500, 1600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2025, 1, 1), new Consumption(2100, 200, 300, 400, 500, 600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2025, 2, 1), new Consumption(3100, 1200, 1300, 1400, 1500, 1600));
+
+            try
+            {
+                Database.SaveEnergyMonths(energyMonths);
+                Assert.IsTrue(File.Exists(consumptionsFilename), $"The file {consumptionsFilename} should exist after saving");
+                EnergyMonthCollection expected = Database.GetEnergyConsumptionForYear(2024);
+                Assert.AreEqual(2, expected.Get().Count, "There should be 2 energy Months retrieved");
+            }
+            catch
+            {
+                Assert.Fail("Getting consumption for speficic year should work correctly");
+            }
+            finally
+            {
+                if (File.Exists(pricesFilename))
+                {
+                    File.Delete(pricesFilename);
+                }
+                if (File.Exists(consumptionsFilename))
+                {
+                    File.Delete(consumptionsFilename);
+                }
+            }
+        }
+
+
+        [Test()]
         public void EnergyMonthIntegrationTest()
         {
             EnergyMonthCollection energyMonths = new EnergyMonthCollection();
@@ -98,6 +134,35 @@ namespace EnergyCostTool.Dal.Tests
                 }
             }
         }
+
+        [Test()]
+        public void FixedCostsIntegrationTest()
+        {
+            StandardCostCollection standardCosts = new StandardCostCollection();
+            standardCosts.AddOrUpdate(new StandardCost(new DateTime(2024, 10, 1), FixedCostType.StandingChargeElectricity, 5.99));
+            standardCosts.AddOrUpdate(new StandardCost(new DateTime(2024, 10, 2), FixedCostType.StandingChargeElectricity, 3.99));
+            standardCosts.AddOrUpdate(new StandardCost(new DateTime(2024, 10, 1), FixedCostType.TransportCostElectricity, 5.99));
+
+            try
+            {
+                Database.SaveStandardCosts(standardCosts);
+                Assert.IsTrue(File.Exists(fixedCostsFilename), $"The file {fixedCostsFilename} should exist after saving");
+                StandardCostCollection expected = Database.GetStandardCosts();
+                Assert.AreEqual(3, expected.Get().Count, "There should be 3 standard Costs retrieved");
+            }
+            catch
+            {
+                Assert.Fail("Save and load of data should work well");
+            }
+            finally
+            {
+                if (File.Exists(fixedCostsFilename))
+                {
+                    File.Delete(fixedCostsFilename);
+                }
+            }
+        }
+
 
     }
 }

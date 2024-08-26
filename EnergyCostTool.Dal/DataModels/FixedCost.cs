@@ -1,6 +1,7 @@
 ﻿using EnergyCostTool.Models;
 using EnergyCostTool.Models.Enumerations;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace EnergyCostTool.Dal.DataModels;
 
@@ -33,5 +34,18 @@ public class FixedCost
             FixedCostType.SolarCost => FixedCostTariffType.MonthlyCanBeZero,
             _ => throw new ArgumentOutOfRangeException(nameof(costType), costType, null)
         };
+    }
+
+    public FixedCost(StandardCost standardCost)
+    {
+        StartDate = standardCost.StartDate;
+        CostType = standardCost.CostType;
+        Price = standardCost.Price;
+        TariffType = standardCost.TariffType;
+    }
+
+    public StandardCost ConvertToStandardCost()
+    {
+        return new StandardCost(StartDate, CostType, Price);
     }
 }
