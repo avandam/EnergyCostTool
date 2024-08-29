@@ -5,7 +5,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using EnergyCostTool.Data;
+using EnergyCostTool.Dal;
+using EnergyCostTool.Models;
 
 namespace EnergyCostTool;
 
@@ -14,12 +15,12 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
 {
-    private readonly EnergyPriceCollection energyPriceCollection;
-    public ObservableCollection<EnergyPrice> EnergyPrices { get; protected set; }
-    public EnergyPriceWindow(EnergyPriceCollection energyPriceCollection)
+    private readonly EnergyMonthCollection energyTariffs;
+    public ObservableCollection<EnergyMonth> EnergyTariffs { get; protected set; }
+    public EnergyPriceWindow()
     {
         InitializeComponent();
-        this.energyPriceCollection = energyPriceCollection;
+        this.energyTariffs = Database.GetEnergyTariffs();
         DisableChanges();
         ToggleCapFields(false);
         InitializeUi();
@@ -28,8 +29,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
     private void InitializeUi()
     {
         ClearTextBoxes();
-        EnergyPrices = new ObservableCollection<EnergyPrice>(energyPriceCollection.Get().OrderByDescending(price => price.StartDate));
-        RaisePropertyChanged("EnergyPrices");
+        EnergyTariffs = new ObservableCollection<EnergyMonth>(energyTariffs.Get().OrderByDescending(price => price.Month.Year).ThenByDescending(price => price.Month.Month));
+        RaisePropertyChanged("EnergyTariffs");
     }
 
     private void ClearTextBoxes()
@@ -82,20 +83,22 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
         
     private void TxtDate_OnTextChanged(object sender, TextChangedEventArgs e)
     {
+
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            if (startDate.Year is < 2000 or > 2100)
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
+            if (year < 2000 || year > 2100)
             {
                 DisableChanges();
             }
 
-            if (startDate.Month is < 1 or > 12)
+            if (month < 1 || month > 12)
             {
                 DisableChanges();
             }
 
-            if (energyPriceCollection.ContainsDataFor(startDate))
+            if (energyTariffs.ContainsDataFor(new DateTime(year, month, 1)))
             {
                 EnableUpdateDelete();
             }
@@ -135,7 +138,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
             double norm = Convert.ToDouble(TxtNorm.Text);
             double normT = Convert.ToDouble(TxtNormT.Text);
             double low = Convert.ToDouble(TxtLow.Text);
@@ -143,9 +147,9 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
             double gas = Convert.ToDouble(TxtGas.Text);
             double electricityCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
             double gasCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
-            EnergyPrice energyPrice = new EnergyPrice(startDate, norm, normT, low, lowT, gas, electricityCap, gasCap);
-            energyPriceCollection.Add(energyPrice);
-            energyPriceCollection.Save();
+            Tariff tariff = new Tariff(norm, normT, low, lowT, gas, electricityCap, gasCap);
+            energyTariffs.AddOrUpdateEnergyMonth(new DateTime(year, month, 1), tariff);
+            Database.SaveTariffs(energyTariffs);
             InitializeUi();
         }
         catch (Exception exception)
@@ -159,7 +163,8 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
             double norm = Convert.ToDouble(TxtNorm.Text);
             double normT = Convert.ToDouble(TxtNormT.Text);
             double low = Convert.ToDouble(TxtLow.Text);
@@ -167,9 +172,9 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
             double gas = Convert.ToDouble(TxtGas.Text);
             double electricityCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtElectricityCap.Text) : 1000;
             double gasCap = ChkCapActive.IsChecked != null && ChkCapActive.IsChecked.Value ? Convert.ToDouble(TxtGasCap.Text) : 1000;
-            EnergyPrice energyPrice = new EnergyPrice(startDate, norm, normT, low, lowT, gas, electricityCap, gasCap);
-            energyPriceCollection.Update(energyPrice);
-            energyPriceCollection.Save();
+            Tariff tariff = new Tariff(norm, normT, low, lowT, gas, electricityCap, gasCap);
+            energyTariffs.AddOrUpdateEnergyMonth(new DateTime(year, month, 1), tariff);
+            Database.SaveTariffs(energyTariffs);
             InitializeUi();
         }
         catch (Exception exception)
@@ -182,9 +187,10 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            energyPriceCollection.Delete(startDate);
-            energyPriceCollection.Save();
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
+            energyTariffs.Get(new DateTime(year, month, 1)).DeleteTariff();
+            Database.SaveConsumptions(energyTariffs);
             InitializeUi();
         }
         catch (Exception exception)
@@ -195,18 +201,18 @@ public partial class EnergyPriceWindow : Window, INotifyPropertyChanged
 
     private void LvPrices_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (LvPrices.SelectedItem is EnergyPrice selectedConsumption)
+        if (LvPrices.SelectedItem is EnergyMonth selectedTariff)
         {
-            TxtDate.Text = selectedConsumption.StartDate.ToString("yyyy-MM-dd");
-            TxtNorm.Text = selectedConsumption.ElectricityHigh.ToString(CultureInfo.InvariantCulture);
-            TxtNormT.Text = selectedConsumption.ReturnElectricityHigh.ToString(CultureInfo.InvariantCulture);
-            TxtLow.Text = selectedConsumption.ElectricityLow.ToString(CultureInfo.InvariantCulture);
-            TxtLowT.Text = selectedConsumption.ReturnElectricityLow.ToString(CultureInfo.InvariantCulture);
-            TxtGas.Text = selectedConsumption.Gas.ToString(CultureInfo.InvariantCulture);
-            ChkCapActive.IsChecked = Math.Abs(selectedConsumption.ElectricityCap - 1000) > 1;
-            ToggleCapFields(Math.Abs(selectedConsumption.ElectricityCap - 1000) > 1);
-            TxtElectricityCap.Text = selectedConsumption.ElectricityCap.ToString(CultureInfo.InvariantCulture);
-            TxtGasCap.Text = selectedConsumption.GasCap.ToString(CultureInfo.InvariantCulture);
+            TxtDate.Text = selectedTariff.Month.Year + "-" + selectedTariff.Month.Month; ;
+            TxtNorm.Text = selectedTariff.Tariff.ElectricityHigh.ToString(CultureInfo.InvariantCulture);
+            TxtNormT.Text = selectedTariff.Tariff.ReturnElectricityHigh.ToString(CultureInfo.InvariantCulture);
+            TxtLow.Text = selectedTariff.Tariff.ElectricityLow.ToString(CultureInfo.InvariantCulture);
+            TxtLowT.Text = selectedTariff.Tariff.ReturnElectricityLow.ToString(CultureInfo.InvariantCulture);
+            TxtGas.Text = selectedTariff.Tariff.Gas.ToString(CultureInfo.InvariantCulture);
+            ChkCapActive.IsChecked = Math.Abs(selectedTariff.Tariff.ElectricityCap - 1000) > 1;
+            ToggleCapFields(Math.Abs(selectedTariff.Tariff.ElectricityCap - 1000) > 1);
+            TxtElectricityCap.Text = selectedTariff.Tariff.ElectricityCap.ToString(CultureInfo.InvariantCulture);
+            TxtGasCap.Text = selectedTariff.Tariff.GasCap.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

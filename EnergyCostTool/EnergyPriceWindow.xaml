@@ -4,13 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EnergyCostTool"
-        xmlns:data="clr-namespace:EnergyCostTool.Data"
         xmlns:global="clr-namespace:EnergyCostTool.Converters"
         mc:Ignorable="d"
         Title="EnergyPriceWindow" Height="450" Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
-        <global:DateConverter x:Key="DateConverter"/>
+        <global:YearMonthConverter x:Key="YearMonthConverter"/>
         <global:CapConverter x:Key="CapConverter"/>
         <global:DetailedCurrencyConverter x:Key="DetailedCurrencyConverter"/>
 
@@ -43,17 +42,17 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0">EnergieTarieven</Label>
-        <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="14" Margin="10" Name="LvPrices" ItemsSource="{Binding EnergyPrices}" SelectionChanged="LvPrices_OnSelectionChanged">
+        <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="14" Margin="10" Name="LvPrices" ItemsSource="{Binding EnergyTariffs}" SelectionChanged="LvPrices_OnSelectionChanged">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
-                    <GridViewColumn Header="Norm" Width="90" DisplayMemberBinding="{Binding ElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Norm T" Width="90" DisplayMemberBinding="{Binding ReturnElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding ReturnElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Gas, Converter={StaticResource DetailedCurrencyConverter}}" />
-                    <GridViewColumn Header="Plaf. E" Width="90" DisplayMemberBinding="{Binding ElectricityCap, Converter={StaticResource CapConverter}}" />
-                    <GridViewColumn Header="Plaf. G" Width="90" DisplayMemberBinding="{Binding GasCap, Converter={StaticResource CapConverter}}" />
+                    <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding Month, Converter={StaticResource YearMonthConverter}}" />
+                    <GridViewColumn Header="Norm" Width="90" DisplayMemberBinding="{Binding Tariff.ElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Norm T" Width="90" DisplayMemberBinding="{Binding Tariff.ReturnElectricityHigh, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding Tariff.ElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Dal" Width="90" DisplayMemberBinding="{Binding Tariff.ReturnElectricityLow, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Gas" Width="90" DisplayMemberBinding="{Binding Tariff.Gas, Converter={StaticResource DetailedCurrencyConverter}}" />
+                    <GridViewColumn Header="Plaf. E" Width="90" DisplayMemberBinding="{Binding Tariff.ElectricityCap, Converter={StaticResource CapConverter}}" />
+                    <GridViewColumn Header="Plaf. G" Width="90" DisplayMemberBinding="{Binding Tariff.GasCap, Converter={StaticResource CapConverter}}" />
                 </GridView>
             </ListView.View>
         </ListView>

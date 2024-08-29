@@ -21,6 +21,23 @@ namespace EnergyCostTool.Dal
             return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
         }
 
+        public static EnergyMonthCollection GetEnergyTariffs()
+        {
+            List<EnergyPrice> energyPrices;
+            try
+            {
+                energyPrices = EnergyPriceFileDal.Load();
+            }
+            catch // No Price file yet -> bypass exception
+            {
+                return new EnergyMonthCollection();
+            }
+            List<EnergyConsumption> energyConsumptions = [];
+
+            return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
+        }
+
+
         public static EnergyMonthCollection GetEnergyConsumptionForYear(int year)
         {
             List<EnergyConsumption> energyConsumptions;
@@ -62,6 +79,15 @@ namespace EnergyCostTool.Dal
 
             EnergyConsumptionFileDal.Save(energyConsumptions);
         }
+
+        public static void SaveTariffs(EnergyMonthCollection energyMonths)
+        {
+            (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) energyInformation = ConvertFromEnergyMonthCollection(energyMonths);
+            List<EnergyPrice> energyPrices = energyInformation.prices;
+
+            EnergyPriceFileDal.Save(energyPrices);
+        }
+
 
         internal static EnergyMonthCollection ConvertToEnergyMonthCollection(List<EnergyConsumption> energyConsumptions, List<EnergyPrice> energyPrices)
         {

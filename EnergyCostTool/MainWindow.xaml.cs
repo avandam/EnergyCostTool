@@ -46,7 +46,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnEnergyPrices_OnClick(object sender, RoutedEventArgs e)
     {
-        EnergyPriceWindow energyPriceWindow = new EnergyPriceWindow(viewModel.EnergyPriceCollection);
+        EnergyPriceWindow energyPriceWindow = new EnergyPriceWindow();
         energyPriceWindow.Closed += (_, _) => InitializeUi();
         energyPriceWindow.Show();
     }

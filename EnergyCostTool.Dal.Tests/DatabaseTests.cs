@@ -182,7 +182,7 @@ namespace EnergyCostTool.Dal.Tests
             }
             catch
             {
-                Assert.Fail("Getting consumption for speficic year should work correctly");
+                Assert.Fail("Getting consumptions should work correctly");
             }
             finally
             {
@@ -196,6 +196,41 @@ namespace EnergyCostTool.Dal.Tests
                 }
             }
         }
+
+        [Test()]
+        public void GetTariffsTest()
+        {
+            EnergyMonthCollection energyMonths = new EnergyMonthCollection();
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2024, 11, 1), new Consumption(100, 200, 300, 400, 500, 600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2024, 12, 1), new Consumption(1100, 1200, 1300, 1400, 1500, 1600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2025, 1, 1), new Consumption(2100, 200, 300, 400, 500, 600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2025, 2, 1), new Consumption(3100, 1200, 1300, 1400, 1500, 1600));
+            energyMonths.AddOrUpdateEnergyMonth(new DateTime(2025, 3, 1), new Tariff(0.1, 0.2, 0.3, 0.4, 0.5));
+
+            try
+            {
+                Database.SaveEnergyMonths(energyMonths);
+                Assert.IsTrue(File.Exists(pricesFilename), $"The file {pricesFilename} should exist after saving");
+                EnergyMonthCollection expected = Database.GetEnergyTariffs();
+                Assert.AreEqual(1, expected.Get().Count, "There should be 1 energy Months retrieved");
+            }
+            catch
+            {
+                Assert.Fail("Getting tariffs should work correctly");
+            }
+            finally
+            {
+                if (File.Exists(pricesFilename))
+                {
+                    File.Delete(pricesFilename);
+                }
+                if (File.Exists(consumptionsFilename))
+                {
+                    File.Delete(consumptionsFilename);
+                }
+            }
+        }
+
 
     }
 }
