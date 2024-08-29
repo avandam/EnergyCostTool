@@ -12,8 +12,6 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class MainWindow : Window, INotifyPropertyChanged
 {
-    private readonly EnergyViewModel viewModel;
-
     public ObservableCollection<EnergyMonth> EnergyConsumptionForCurrentYear { get; protected set; }
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -26,7 +24,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     public MainWindow()
     {
         InitializeComponent();
-        viewModel = new EnergyViewModel();
         InitializeUi();
     }
 
@@ -60,7 +57,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnYearlyCost_OnClick(object sender, RoutedEventArgs e)
     {
-        YearlyCostWindow yearlyCostWindow = new YearlyCostWindow(viewModel);
+        YearlyCostWindow yearlyCostWindow = new YearlyCostWindow(null);
         yearlyCostWindow.Closed += (_, _) => InitializeUi();
         yearlyCostWindow.Show();
     }
@@ -72,7 +69,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnSolarPanelFinancialResults_OnClick(object sender, RoutedEventArgs e)
     {
-        SolarInformationWindow solarInformationWindow = new SolarInformationWindow(viewModel);
+        SolarInformationWindow solarInformationWindow = new SolarInformationWindow();
         solarInformationWindow.Closed += (_, _) => InitializeUi();
         solarInformationWindow.Show();
     }

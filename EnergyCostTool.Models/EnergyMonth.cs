@@ -93,5 +93,30 @@ namespace EnergyCostTool.Models
 
             return result;
         }
+
+        public double GetFixedPrice(FixedCostType costType)
+        {
+            if (!fixedPrices.Exists(fixedPrice => fixedPrice.FixedCostType == costType))
+            {
+                return 0.0;
+            }
+            return fixedPrices.First(fixedPrice => fixedPrice.FixedCostType == costType).Price;
+        }
+
+        public double GetDirectlyUsedPrice()
+        {
+            double normFactor = (double)Consumption.ReturnElectricityHigh / (Consumption.ReturnElectricityHigh + Consumption.ReturnElectricityLow);
+            int directlyUsedNorm = Convert.ToInt32(normFactor * Consumption.DirectlyUsed);
+            
+            return directlyUsedNorm * Math.Min(Tariff.ElectricityHigh, Tariff.ElectricityCap);
+        }
+
+        public double GetDirectlyUsedLowPrice()
+        {
+            double normFactor = (double)Consumption.ReturnElectricityLow / (Consumption.ReturnElectricityHigh + Consumption.ReturnElectricityLow);
+            int directlyUsedLow = Convert.ToInt32(normFactor * Consumption.DirectlyUsed);
+
+            return directlyUsedLow * Math.Min(Tariff.ElectricityLow, Tariff.ElectricityCap);
+        }
     }
 }

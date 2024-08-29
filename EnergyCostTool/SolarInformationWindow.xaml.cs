@@ -1,5 +1,7 @@
 ﻿using System.Windows;
+using EnergyCostTool.Dal;
 using EnergyCostTool.Logic;
+using EnergyCostTool.Models;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool;
@@ -9,18 +11,17 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class SolarInformationWindow : Window
 {
-    private readonly EnergyViewModel energyViewModel;
-    
-    public SolarInformationWindow(EnergyViewModel energyViewModel)
+     public SolarInformationWindow()
     {
         InitializeComponent();
-        this.energyViewModel = energyViewModel;
-        ShowInformation();
+        EnergyMonthCollection energyMonths = Database.GetSolarEnergyMonths();
+        energyMonths.InjectStandardCosts(Database.GetStandardCosts());
+        SolarInformationViewModel solarInformation = SolarInformationCalculator.ComputeSolarInformation(energyMonths);
+        ShowInformation(solarInformation);
     }
 
-    private void ShowInformation()
+    private void ShowInformation(SolarInformationViewModel solarInformation)
     {
-        SolarInformationViewModel solarInformation = SolarInformationCalculator.ComputeSolarInformation(energyViewModel);
         LblGenerated.Content = solarInformation.SolarGenerated;
         LblDirectlyUsed.Content = solarInformation.SolarDirectlyUsed;
         LblDirectlyUsedPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarDirectlyUsedPrice, 2, MidpointRounding.AwayFromZero);

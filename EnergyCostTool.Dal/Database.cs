@@ -62,6 +62,15 @@ namespace EnergyCostTool.Dal
             return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
         }
 
+        public static EnergyMonthCollection GetSolarEnergyMonths()
+        {
+            List<EnergyConsumption> energyConsumptions = EnergyConsumptionFileDal.Load().Where(energyConsumption => energyConsumption.SolarGeneration > 0).ToList();
+            List<EnergyPrice> energyPrices = EnergyPriceFileDal.Load();
+
+            return ConvertToSolarEnergyMonthCollection(energyConsumptions, energyPrices);
+        }
+
+
         public static void SaveEnergyMonths(EnergyMonthCollection energyMonths)
         {
             (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) energyInformation = ConvertFromEnergyMonthCollection(energyMonths);
@@ -105,6 +114,24 @@ namespace EnergyCostTool.Dal
 
             return result;
         }
+
+        internal static EnergyMonthCollection ConvertToSolarEnergyMonthCollection(List<EnergyConsumption> energyConsumptions, List<EnergyPrice> energyPrices)
+        {
+            EnergyMonthCollection result = new EnergyMonthCollection();
+
+            foreach (EnergyConsumption energyConsumption in energyConsumptions)
+            {
+                result.AddOrUpdateEnergyMonth(energyConsumption.Month, energyConsumption.ConvertToConsumption());
+            }
+
+            foreach (EnergyPrice energyPrice in energyPrices)
+            {
+                result.UpdateEnergyMonth(energyPrice.StartDate, energyPrice.ConvertToTariff());
+            }
+
+            return result;
+        }
+
 
 
         internal static (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) ConvertFromEnergyMonthCollection(EnergyMonthCollection energyMonths)

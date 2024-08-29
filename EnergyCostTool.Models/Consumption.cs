@@ -9,6 +9,15 @@ public class Consumption
     public int ReturnElectricityLow { get; private set; }
     public int Gas { get; private set; }
 
+
+    public int DirectlyUsed
+    {
+        get
+        {
+            return SolarGeneration - ReturnElectricityHigh - ReturnElectricityLow;
+        }
+    }
+
     public Consumption(int solarGeneration, int electricityHigh, int returnElectricityHigh, int electricityLow, int returnElectricityLow, int gas)
     {
         SolarGeneration = solarGeneration;
@@ -18,4 +27,5 @@ public class Consumption
         ReturnElectricityLow = returnElectricityLow;
         Gas = gas;
     }
+
 }

@@ -39,6 +39,15 @@ namespace EnergyCostTool.Models
             return energyMonths.First(energyMonth => energyMonth.Month == month);
         }
 
+        public void UpdateEnergyMonth(DateTime month, Tariff tariff)
+        {
+            if (energyMonths.Exists(eMonth => eMonth.Month == month))
+            {
+                energyMonths.Find(eMonth => eMonth.Month == month).AddOrUpdate(tariff);
+            }
+            energyMonths.OrderByDescending(eMonth => eMonth.Month);
+        }
+
         public void AddOrUpdateEnergyMonth(DateTime month, Consumption consumption)
         {
             if (!energyMonths.Exists(eMonth => eMonth.Month == month))
@@ -88,6 +97,36 @@ namespace EnergyCostTool.Models
         public bool ContainsDataFor(DateTime month)
         {
             return energyMonths.Exists(energyMonth => energyMonth.Month == month);
+        }
+
+        public void InjectStandardCosts(StandardCostCollection standardCostCollection) 
+        { 
+            foreach (EnergyMonth energyMonth in energyMonths)
+            {
+                foreach (FixedCostType costType in Enum.GetValues(typeof(FixedCostType)))
+                {
+                    try
+                    {
+                        StandardCost standardCost = standardCostCollection.Get(energyMonth.Month, costType);
+                        switch (standardCost.TariffType)
+                        {
+                            case FixedCostTariffType.Daily:
+                                int nrOfDays = (energyMonth.Month.AddMonths(1) - energyMonth.Month).Days;
+                                energyMonth.AddOrUpdate(new FixedPrice(costType, standardCost.Price * nrOfDays));
+                                break;
+                            case FixedCostTariffType.Monthly:
+                            case FixedCostTariffType.MonthlyCanBeZero:
+                                energyMonth.AddOrUpdate(new FixedPrice(costType, standardCost.Price));
+                                break;
+                            case FixedCostTariffType.Yearly:
+                                energyMonth.AddOrUpdate(new FixedPrice(costType, standardCost.Price/12));
+                                break;
+                        }
+                    }
+                    catch { }
+                }
+            }
+
         }
 
     }
