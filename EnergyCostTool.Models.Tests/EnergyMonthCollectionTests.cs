@@ -267,5 +267,61 @@ namespace EnergyCostTool.Models.Tests
             Assert.AreEqual(0, energyMonthCollection.Get().Count, "There should be no EnergyMonths in the collection");
         }
 
+        [Test()]
+        public void ContainsDataForTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(10, 11, 12, 13, 14, 15);
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+
+            Assert.IsTrue(energyMonthCollection.ContainsDataFor(new DateTime(2024, 10, 1)), "EnergyMonth should have been found");
+        }
+
+        [Test()]
+        public void ContainsDataForNonExistingDateTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(10, 11, 12, 13, 14, 15);
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+
+            Assert.IsFalse(energyMonthCollection.ContainsDataFor(new DateTime(2024, 11, 1)), "EnergyMonth should not have been found");
+        }
+
+        [Test()]
+        public void GetByDateTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(10, 11, 12, 13, 14, 15);
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+
+            Assert.DoesNotThrow(() => energyMonthCollection.Get(new DateTime(2024, 10, 1)), "EnergyMonth should have been found");
+        }
+
+        [Test()]
+        public void GetByDateNonExistingDateTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(10, 11, 12, 13, 14, 15);
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+
+            Assert.Throws<EnergyMonthNotFoundException>(() => energyMonthCollection.Get(new DateTime(2024, 11, 1)), "EnergyMonth should not have been found");
+        }
+
+        [Test()]
+        public void GetByDateEmptyCollectionTest()
+        {
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+
+            Assert.Throws<EnergyMonthNotFoundException>(() => energyMonthCollection.Get(new DateTime(2024, 11, 1)), "EnergyMonth should not have been found");
+        }
+
     }
 }

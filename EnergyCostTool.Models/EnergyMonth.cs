@@ -49,16 +49,26 @@ namespace EnergyCostTool.Models
 
         public void AddOrUpdate(FixedPrice fixedPrice)
         {
-            Delete(fixedPrice);
+            DeleteFixedPrice(fixedPrice);
             fixedPrices.Add(fixedPrice);
         }
 
-        public void Delete(FixedPrice fixedPrice)
+        public void DeleteFixedPrice(FixedPrice fixedPrice)
         {
             if (fixedPrices.Exists(price => price.FixedCostType == fixedPrice.FixedCostType))
             {
                 fixedPrices.Remove(fixedPrices.Find(price => price.FixedCostType == fixedPrice.FixedCostType));
             }
+        }
+        
+        public void DeleteConsumption()
+        {
+            Consumption = null;
+        }
+
+        public void DeleteTariff()
+        {
+            Tariff = null;
         }
 
         public ReadOnlyCollection<FixedPrice> GetFixedPrices()
@@ -66,6 +76,7 @@ namespace EnergyCostTool.Models
             return fixedPrices.AsReadOnly();
         }
 
+        // Note that this method does not take "Saldering" into account, but used as indication for the prices of the month.
         public double GetTotalPrice()
         {
             double result = 0.0;

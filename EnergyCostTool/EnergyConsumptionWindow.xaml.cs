@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using EnergyCostTool.Data;
+using EnergyCostTool.Dal;
+using EnergyCostTool.Models;
 
 namespace EnergyCostTool;
 
@@ -13,12 +14,13 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
 {
-    private readonly EnergyConsumptionCollection energyConsumptionCollection;
-    public ObservableCollection<EnergyConsumption> EnergyConsumptions { get; protected set; }
-    public EnergyConsumptionWindow(EnergyConsumptionCollection energyConsumptionCollection)
+    private readonly EnergyMonthCollection energyConsumptions;
+    public ObservableCollection<EnergyMonth> EnergyConsumptions { get; protected set; }
+
+    public EnergyConsumptionWindow()
     {
         InitializeComponent();
-        this.energyConsumptionCollection = energyConsumptionCollection;
+        this.energyConsumptions = Database.GetEnergyConsumptions();
         DisableChanges();
         InitializeUi();
     }
@@ -26,7 +28,7 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
     private void InitializeUi()
     {
         ClearTextBoxes();
-        EnergyConsumptions = new ObservableCollection<EnergyConsumption>(energyConsumptionCollection.Get().OrderByDescending(consumption => consumption.Month.Year).ThenByDescending(consumption => consumption.Month.Month));
+        EnergyConsumptions = new ObservableCollection<EnergyMonth>(energyConsumptions.Get().OrderByDescending(consumption => consumption.Month.Year).ThenByDescending(consumption => consumption.Month.Month));
         RaisePropertyChanged("EnergyConsumptions");
     }
 
@@ -59,7 +61,7 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
                 DisableChanges();
             }
 
-            if (energyConsumptionCollection.ContainsDataFor(new DateTime(year, month, 1)))
+            if (energyConsumptions.ContainsDataFor(new DateTime(year, month, 1)))
             {
                 EnableUpdateDelete();
             }
@@ -108,9 +110,9 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
             int low = Convert.ToInt32(TxtLow.Text);
             int lowT = Convert.ToInt32(TxtLowT.Text);
             int gas = Convert.ToInt32(TxtGas.Text);
-            EnergyConsumption energyConsumption = new EnergyConsumption(new DateTime(year, month, 1), solar, norm, normT, low, lowT, gas);
-            energyConsumptionCollection.Add(energyConsumption);
-            energyConsumptionCollection.Save();
+            Consumption consumption = new Consumption(solar, norm, normT, low, lowT, gas);
+            energyConsumptions.AddOrUpdateEnergyMonth(new DateTime(year, month, 1), consumption);
+            Database.SaveConsumptions(energyConsumptions);
             InitializeUi();
         }
         catch (Exception exception)
@@ -132,9 +134,9 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
             int low = Convert.ToInt32(TxtLow.Text);
             int lowT = Convert.ToInt32(TxtLowT.Text);
             int gas = Convert.ToInt32(TxtGas.Text);
-            EnergyConsumption energyConsumption = new EnergyConsumption(new DateTime(year, month, 1), solar, norm, normT, low, lowT, gas);
-            energyConsumptionCollection.Update(energyConsumption);
-            energyConsumptionCollection.Save();
+            Consumption consumption = new Consumption(solar, norm, normT, low, lowT, gas);
+            energyConsumptions.AddOrUpdateEnergyMonth(new DateTime(year, month, 1), consumption);
+            Database.SaveConsumptions(energyConsumptions);
             InitializeUi();
         }
         catch (Exception exception)
@@ -149,8 +151,8 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
         {
             int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
             int month = Convert.ToInt32(TxtDate.Text.Substring(5));
-            energyConsumptionCollection.Delete(new DateTime(year, month, 1));
-            energyConsumptionCollection.Save();
+            energyConsumptions.Get(new DateTime(year, month, 1)).DeleteConsumption();
+            Database.SaveConsumptions(energyConsumptions);
             InitializeUi();
         }
         catch (Exception exception)
@@ -161,15 +163,15 @@ public partial class EnergyConsumptionWindow : Window, INotifyPropertyChanged
 
     private void LvConsumption_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (LvConsumption.SelectedItem is EnergyConsumption selectedConsumption)
+        if (LvConsumption.SelectedItem is EnergyMonth selectedConsumption)
         {
             TxtDate.Text = selectedConsumption.Month.Year + "-" + selectedConsumption.Month.Month;
-            TxtSolar.Text = selectedConsumption.SolarGeneration.ToString();
-            TxtNorm.Text = selectedConsumption.ElectricityHigh.ToString();
-            TxtNormT.Text = selectedConsumption.ReturnElectricityHigh.ToString();
-            TxtLow.Text = selectedConsumption.ElectricityLow.ToString();
-            TxtLowT.Text = selectedConsumption.ReturnElectricityLow.ToString();
-            TxtGas.Text = selectedConsumption.Gas.ToString();
+            TxtSolar.Text = selectedConsumption.Consumption.SolarGeneration.ToString();
+            TxtNorm.Text = selectedConsumption.Consumption.ElectricityHigh.ToString();
+            TxtNormT.Text = selectedConsumption.Consumption.ReturnElectricityHigh.ToString();
+            TxtLow.Text = selectedConsumption.Consumption.ElectricityLow.ToString();
+            TxtLowT.Text = selectedConsumption.Consumption.ReturnElectricityLow.ToString();
+            TxtGas.Text = selectedConsumption.Consumption.Gas.ToString();
         }
     }
 

@@ -1,16 +1,26 @@
 ﻿using EnergyCostTool.Dal.DataModels;
 using EnergyCostTool.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EnergyCostTool.Dal
 {
     public static class Database
     {
+        public static EnergyMonthCollection GetEnergyConsumptions()
+        {
+            List<EnergyConsumption> energyConsumptions;
+            try
+            {
+                energyConsumptions = EnergyConsumptionFileDal.Load();
+            }
+            catch // No Consumption file yet -> bypass exception
+            {
+                return new EnergyMonthCollection();
+            }
+            List<EnergyPrice> energyPrices = [];
+
+            return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
+        }
+
         public static EnergyMonthCollection GetEnergyConsumptionForYear(int year)
         {
             List<EnergyConsumption> energyConsumptions;
@@ -35,6 +45,24 @@ namespace EnergyCostTool.Dal
             return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
         }
 
+        public static void SaveEnergyMonths(EnergyMonthCollection energyMonths)
+        {
+            (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) energyInformation = ConvertFromEnergyMonthCollection(energyMonths);
+            List<EnergyConsumption> energyConsumptions = energyInformation.consumptions;
+            List<EnergyPrice> energyPrices = energyInformation.prices;
+
+            EnergyConsumptionFileDal.Save(energyConsumptions);
+            EnergyPriceFileDal.Save(energyPrices);
+        }
+
+        public static void SaveConsumptions(EnergyMonthCollection energyMonths)
+        {
+            (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) energyInformation = ConvertFromEnergyMonthCollection(energyMonths);
+            List<EnergyConsumption> energyConsumptions = energyInformation.consumptions;
+
+            EnergyConsumptionFileDal.Save(energyConsumptions);
+        }
+
         internal static EnergyMonthCollection ConvertToEnergyMonthCollection(List<EnergyConsumption> energyConsumptions, List<EnergyPrice> energyPrices)
         {
             EnergyMonthCollection result = new EnergyMonthCollection();
@@ -52,15 +80,6 @@ namespace EnergyCostTool.Dal
             return result;
         }
 
-        public static void SaveEnergyMonths(EnergyMonthCollection energyMonths)
-        {
-            (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) energyInformation = ConvertFromEnergyMonthCollection(energyMonths);
-            List<EnergyConsumption> energyConsumptions = energyInformation.consumptions;
-            List<EnergyPrice> energyPrices = energyInformation.prices;
-
-            EnergyConsumptionFileDal.Save(energyConsumptions);
-            EnergyPriceFileDal.Save(energyPrices);
-        }
 
         internal static (List<EnergyConsumption> consumptions, List<EnergyPrice> prices) ConvertFromEnergyMonthCollection(EnergyMonthCollection energyMonths)
         {

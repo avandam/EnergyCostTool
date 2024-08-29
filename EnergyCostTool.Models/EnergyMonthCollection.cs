@@ -24,6 +24,21 @@ namespace EnergyCostTool.Models
             return energyMonths.OrderByDescending(energyMonth => energyMonth.Month).ToList().AsReadOnly();
         }
 
+        public EnergyMonth Get(DateTime month)
+        {
+            if (energyMonths.Count == 0)
+            {
+                throw new EnergyMonthNotFoundException("There are no energy months available.");
+            }
+
+            if (!energyMonths.Exists(energyMonth => energyMonth.Month == month))
+            {
+                throw new EnergyMonthNotFoundException($"Energy Month for month {month.ToShortDateString()} is not available.");
+            }
+
+            return energyMonths.First(energyMonth => energyMonth.Month == month);
+        }
+
         public void AddOrUpdateEnergyMonth(DateTime month, Consumption consumption)
         {
             if (!energyMonths.Exists(eMonth => eMonth.Month == month))
@@ -69,5 +84,11 @@ namespace EnergyCostTool.Models
             }
             energyMonths.Remove(energyMonths.Find(eMonth => eMonth.Month == month));
         }
+
+        public bool ContainsDataFor(DateTime month)
+        {
+            return energyMonths.Exists(energyMonth => energyMonth.Month == month);
+        }
+
     }
 }

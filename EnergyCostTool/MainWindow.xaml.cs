@@ -39,7 +39,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnConsumption_Click(object sender, RoutedEventArgs e)
     {
-        EnergyConsumptionWindow energyConsumptionWindow = new EnergyConsumptionWindow(viewModel.EnergyConsumptionCollection);
+        EnergyConsumptionWindow energyConsumptionWindow = new EnergyConsumptionWindow();
         energyConsumptionWindow.Closed += (_, _) => InitializeUi();
         energyConsumptionWindow.Show();
     }

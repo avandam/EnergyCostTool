@@ -158,7 +158,7 @@ namespace EnergyCostTool.Models.Tests
             EnergyMonth energyMonth = new EnergyMonth(date, fixedPrice);
             Assert.AreEqual(1, energyMonth.GetFixedPrices().Count, "There should be one Fixed price");
 
-            energyMonth.Delete(fixedPrice);
+            energyMonth.DeleteFixedPrice(fixedPrice);
             Assert.AreEqual(0, energyMonth.GetFixedPrices().Count, "Fixed price should be deleted correctly.");
         }
 
@@ -301,6 +301,38 @@ namespace EnergyCostTool.Models.Tests
             energyMonth.AddOrUpdate(new FixedPrice(FixedCostType.TransportCostElectricity, 6.00));
 
             Assert.AreEqual(76.00, energyMonth.GetTotalPrice(), "Total price is incorrect");
+        }
+
+        public void DeleteConsumptionTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+
+            EnergyMonth energyMonth = new EnergyMonth(date);
+            energyMonth.AddOrUpdate(new Consumption(500, 100, 300, 200, 100, 10));
+            energyMonth.AddOrUpdate(new Tariff(0.5, 0.2, 0.4, 0.1, 1.5, 0.6, 1.0));
+            energyMonth.AddOrUpdate(new FixedPrice(FixedCostType.TransportCostElectricity, 6.00));
+
+            Assert.IsNotNull(energyMonth.Consumption, "Consumption should be filled in");
+
+            energyMonth.DeleteConsumption();
+
+            Assert.IsNotNull(energyMonth.Consumption, "Consumption should not be filled in");
+        }
+
+        public void DeleteTariffTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+
+            EnergyMonth energyMonth = new EnergyMonth(date);
+            energyMonth.AddOrUpdate(new Consumption(500, 100, 300, 200, 100, 10));
+            energyMonth.AddOrUpdate(new Tariff(0.5, 0.2, 0.4, 0.1, 1.5, 0.6, 1.0));
+            energyMonth.AddOrUpdate(new FixedPrice(FixedCostType.TransportCostElectricity, 6.00));
+
+            Assert.IsNotNull(energyMonth.Tariff, "Tariff should be filled in");
+
+            energyMonth.DeleteTariff();
+
+            Assert.IsNotNull(energyMonth.Tariff, "Tariff should not be filled in");
         }
 
     }
