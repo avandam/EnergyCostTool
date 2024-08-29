@@ -53,7 +53,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         
     private void BtnFixedCosts_OnClick(object sender, RoutedEventArgs e)
     {
-        FixedCostWindow fixedCostWindow = new FixedCostWindow(viewModel.FixedCostCollection);
+        FixedCostWindow fixedCostWindow = new FixedCostWindow();
         fixedCostWindow.Closed += (_, _) => InitializeUi();
         fixedCostWindow.Show();
     }

@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using EnergyCostTool.Models.Enumerations;
+using System.Globalization;
 using System.Windows.Data;
-using EnergyCostTool.Data;
 
 namespace EnergyCostTool.Converters;
 

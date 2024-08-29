@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using EnergyCostTool.Data;
+using EnergyCostTool.Dal;
+using EnergyCostTool.Models;
+using EnergyCostTool.Models.Enumerations;
 
 namespace EnergyCostTool;
 
@@ -14,12 +16,12 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class FixedCostWindow : Window, INotifyPropertyChanged
 {
-    private readonly FixedCostCollection fixedCostCollection;
-    public ObservableCollection<FixedCost> FixedCosts { get; protected set; }
-    public FixedCostWindow(FixedCostCollection fixedCostCollection)
+    private readonly StandardCostCollection standardCosts;
+    public ObservableCollection<StandardCost> StandardCosts { get; protected set; }
+    public FixedCostWindow()
     {
         InitializeComponent();
-        this.fixedCostCollection = fixedCostCollection;
+        this.standardCosts = Database.GetStandardCosts();
         DisableChanges();
         InitializeUi();
     }
@@ -27,8 +29,8 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     private void InitializeUi()
     {
         ClearTextBoxes();
-        FixedCosts = new ObservableCollection<FixedCost>(fixedCostCollection.Get().OrderByDescending(price => price.StartDate));
-        RaisePropertyChanged("FixedCosts");
+        StandardCosts = new ObservableCollection<StandardCost>(standardCosts.Get().OrderByDescending(price => price.StartDate));
+        RaisePropertyChanged("StandardCosts");
     }
 
     private void ClearTextBoxes()
@@ -85,18 +87,19 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-            if (startDate.Year is < 2000 or > 2100)
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
+            if (year is < 2000 or > 2100)
             {
                 DisableChanges();
             }
 
-            if (startDate.Month is < 1 or > 12)
+            if (month is < 1 or > 12)
             {
                 DisableChanges();
             }
 
-            if (fixedCostCollection.ContainsDataFor(startDate, (FixedCostType)CmbType.SelectedValue))
+            if (standardCosts.ContainsDataFor(new DateTime(year, month, 1), (FixedCostType)CmbType.SelectedValue))
             {
                 EnableUpdateDelete();
             }
@@ -136,12 +139,13 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
             FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedValue;
             double price = Convert.ToDouble(TxtPrice.Text);
-            FixedCost fixedCost = new FixedCost(startDate, fixedCostTypeFromInput, price);
-            fixedCostCollection.Add(fixedCost);
-            fixedCostCollection.Save();
+            StandardCost standardCost = new StandardCost(new DateTime(year, month, 1), fixedCostTypeFromInput, price);
+            standardCosts.AddOrUpdate(standardCost);
+            Database.SaveStandardCosts(standardCosts);
             InitializeUi();
         }
         catch (Exception exception)
@@ -155,12 +159,13 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
             FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedValue;
             double price = Convert.ToDouble(TxtPrice.Text);
-            FixedCost fixedCost = new FixedCost(startDate, fixedCostTypeFromInput, price);
-            fixedCostCollection.Update(fixedCost);
-            fixedCostCollection.Save();
+            StandardCost standardCost = new StandardCost(new DateTime(year, month, 1), fixedCostTypeFromInput, price);
+            standardCosts.AddOrUpdate(standardCost);
+            Database.SaveStandardCosts(standardCosts);
             InitializeUi();
         }
         catch (Exception exception)
@@ -173,10 +178,11 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
     {
         try
         {
-            DateTime startDate = DateTime.ParseExact(TxtDate.Text, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            int year = Convert.ToInt32(TxtDate.Text.Substring(0, 4));
+            int month = Convert.ToInt32(TxtDate.Text.Substring(5));
             FixedCostType fixedCostTypeFromInput = (FixedCostType)CmbType.SelectedValue;
-            fixedCostCollection.Delete(startDate, fixedCostTypeFromInput);
-            fixedCostCollection.Save();
+            standardCosts.Delete(standardCosts.Get(new DateTime(year, month, 1), fixedCostTypeFromInput));
+            Database.SaveStandardCosts(standardCosts);
             InitializeUi();
         }
         catch (Exception exception)
@@ -187,9 +193,9 @@ public partial class FixedCostWindow : Window, INotifyPropertyChanged
 
     private void LvFixedCosts_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (LvFixedCosts.SelectedItem is FixedCost selectedFixedCost)
+        if (LvFixedCosts.SelectedItem is StandardCost selectedFixedCost)
         {
-            TxtDate.Text = selectedFixedCost.StartDate.ToString("yyyy-MM-dd");
+            TxtDate.Text = selectedFixedCost.StartDate.ToString("yyyy-MM");
             CmbType.SelectedIndex = (int)selectedFixedCost.CostType;
             TxtPrice.Text = selectedFixedCost.Price.ToString(CultureInfo.CurrentCulture);
             UpdateUiButtons();

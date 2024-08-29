@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:EnergyCostTool"
-        xmlns:data="clr-namespace:EnergyCostTool.Data"
+        xmlns:models="clr-namespace:EnergyCostTool.Models.Enumerations;assembly=EnergyCostTool.Models"
         xmlns:global="clr-namespace:EnergyCostTool.Converters"
         mc:Ignorable="d"
         Title="FixedCostWindow" Height="450" Width="1000"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
-        <global:DateConverter x:Key="DateConverter"/>
+        <global:YearMonthConverter x:Key="YearMonthConverter"/>
         <global:FixedCostTypeConverter x:Key="FixedCostTypeConverter"/>
         <global:FixedCostTariffTypeConverter x:Key="FixedCostTariffTypeConverter"/>
         <global:DetailedCurrencyConverter x:Key="DetailedCurrencyConverter"/>
@@ -44,10 +44,10 @@
         </Grid.RowDefinitions>
 
         <ComboBox Grid.Column="0" Grid.Row="0" Name="CmbSelectYear" SelectionChanged="CmbSelectYear_OnSelectionChanged"></ComboBox>
-        <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="14" Margin="10" Name="LvFixedCosts" ItemsSource="{Binding FixedCosts}" SelectionChanged="LvFixedCosts_OnSelectionChanged">
+        <ListView Grid.Column="0" Grid.Row="1" Grid.RowSpan="14" Margin="10" Name="LvFixedCosts" ItemsSource="{Binding StandardCosts}" SelectionChanged="LvFixedCosts_OnSelectionChanged">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource DateConverter}}" />
+                    <GridViewColumn Header="Startdatum" Width="90" DisplayMemberBinding="{Binding StartDate, Converter={StaticResource YearMonthConverter}}" />
                     <GridViewColumn Header="Type" Width="90" DisplayMemberBinding="{Binding CostType, Converter={StaticResource FixedCostTypeConverter}}" />
                     <GridViewColumn Header="Price" Width="90" DisplayMemberBinding="{Binding Price, Converter={StaticResource DetailedCurrencyConverter}}" />
                     <GridViewColumn Header="Tarief termijn" Width="90" DisplayMemberBinding="{Binding TariffType, Converter={StaticResource FixedCostTariffTypeConverter}}" />
@@ -58,7 +58,7 @@
         <Label Grid.Column="2" Grid.Row="2">Start</Label>
         <TextBox Grid.Column="3" Grid.Row="2" Name="TxtDate" TextChanged="TxtDate_OnTextChanged">yyyy-mm-dd</TextBox>
         <Label Grid.Column="2" Grid.Row="3">Type</Label>
-        <ComboBox Grid.Column="3" Grid.Row="3" Name="CmbType" ItemsSource="{global:EnumValues data:FixedCostType}" SelectedItem="{Binding Path=FixedCostType}" DisplayMemberPath="Description" SelectedValuePath="Value" SelectionChanged="CmbType_OnSelectionChanged"></ComboBox>
+        <ComboBox Grid.Column="3" Grid.Row="3" Name="CmbType" ItemsSource="{global:EnumValues models:FixedCostType}" SelectedItem="{Binding Path=FixedCostType}" DisplayMemberPath="Description" SelectedValuePath="Value" SelectionChanged="CmbType_OnSelectionChanged"></ComboBox>
         <Label Grid.Column="2" Grid.Row="4">Prijs</Label>
         <TextBox Grid.Column="3" Grid.Row="4" Name="TxtPrice" PreviewTextInput="PreviewTextInputDecimal" TextChanged="TxtPrice_OnTextChanged"></TextBox>
         <Button Grid.Column="3" Grid.Row="5" Name="BtnAddPrice" Click="BtnAddPrice_OnClick">Voeg Toe</Button>
