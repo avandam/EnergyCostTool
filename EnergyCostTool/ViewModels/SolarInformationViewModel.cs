@@ -2,20 +2,20 @@
 
 public class SolarInformationViewModel
 {
-    public int SolarGenerated { get; set; }
-    public int SolarDirectlyUsed { get; set; }
-    public double SolarDirectlyUsedPrice { get; set; }
-    public int SolarReturnedNorm { get; set; }
-    public double SolarReturnedNormPrice { get; set; }
-    public int SolarReturnedLow { get; set; }
-    public double SolarReturnedLowPrice { get; set; }
-    public double SolarCostPrice { get; set; }
+    public int Generation { get; set; }
+    public int DirectlyUsed { get; set; }
+    public double DirectlyUsedPrice { get; set; }
+    public int ReturnedNorm { get; set; }
+    public double ReturnedNormPrice { get; set; }
+    public int ReturnedLow { get; set; }
+    public double ReturnedLowPrice { get; set; }
+    public double FixedCostPrice { get; set; }
 
     public double TotalPrice
     {
         get
         {
-            return SolarDirectlyUsedPrice + SolarReturnedLowPrice + SolarReturnedNormPrice + SolarCostPrice;
+            return DirectlyUsedPrice + ReturnedLowPrice + ReturnedNormPrice + FixedCostPrice;
         }
     }
 
@@ -39,11 +39,11 @@ public class SolarInformationViewModel
     {
         get
         {
-            double pricePerMonth = TotalPrice / NrOfMonthsOfSolarPanels;
+            double pricePerMonth = TotalPrice / NrOfMonthsWithPanels;
             return Math.Max(0, Convert.ToInt32(PriceOfSolarPanels / pricePerMonth));
         }
     }
-    public int NrOfMonthsOfSolarPanels { get; set; }
+    public int NrOfMonthsWithPanels { get; set; }
 
     public SolarInformationViewModel()
     {

@@ -10,16 +10,15 @@ namespace EnergyCostTool.Logic
         {
             SolarInformationViewModel solarInformation = new SolarInformationViewModel();
 
-            solarInformation.SolarGenerated = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.SolarGeneration);
-            solarInformation.NrOfMonthsOfSolarPanels = energyMonths.Get().Count;
-            solarInformation.SolarCostPrice = -energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.SolarCost));
-            solarInformation.SolarGenerated = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.SolarGeneration);
-            solarInformation.SolarDirectlyUsed = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.DirectlyUsed);
-            solarInformation.SolarReturnedNorm = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityHigh);
-            solarInformation.SolarReturnedLow = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityLow);
-            solarInformation.SolarReturnedNormPrice = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityHigh * energyMonth.Tariff.ReturnElectricityHigh);
-            solarInformation.SolarReturnedLowPrice = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityLow * energyMonth.Tariff.ReturnElectricityLow);
-            solarInformation.SolarDirectlyUsedPrice = energyMonths.Get().Sum(energyMonth => energyMonth.GetDirectlyUsedPrice() + energyMonth.GetDirectlyUsedLowPrice());
+            solarInformation.Generation = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.SolarGeneration);
+            solarInformation.NrOfMonthsWithPanels = energyMonths.Get().Count;
+            solarInformation.FixedCostPrice = -energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.SolarCost));
+            solarInformation.DirectlyUsed = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.DirectlyUsed);
+            solarInformation.DirectlyUsedPrice = energyMonths.Get().Sum(energyMonth => energyMonth.GetDirectlyUsedPrice() + energyMonth.GetDirectlyUsedLowPrice());
+            solarInformation.ReturnedNorm = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityHigh);
+            solarInformation.ReturnedLow = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityLow);
+            solarInformation.ReturnedNormPrice = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityHigh * energyMonth.Tariff.ReturnElectricityHigh);
+            solarInformation.ReturnedLowPrice = energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityLow * energyMonth.Tariff.ReturnElectricityLow);
             
             return solarInformation;
         }

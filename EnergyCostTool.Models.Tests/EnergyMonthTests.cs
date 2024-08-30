@@ -163,6 +163,49 @@ namespace EnergyCostTool.Models.Tests
         }
 
         [Test()]
+        public void GetFixedPriceTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            FixedPrice fixedPrice = new FixedPrice(FixedCostType.TransportCostElectricity, 1.00);
+            FixedPrice fixedPrice2 = new FixedPrice(FixedCostType.TransportCostGas, 2.00);
+
+            EnergyMonth energyMonth = new EnergyMonth(date);
+            energyMonth.AddOrUpdate(fixedPrice);
+            energyMonth.AddOrUpdate(fixedPrice2);
+            Assert.AreEqual(1.00, energyMonth.GetFixedPrice(FixedCostType.TransportCostElectricity), "The transport cost electricity should be correctly found");
+            Assert.AreEqual(2.00, energyMonth.GetFixedPrice(FixedCostType.TransportCostGas), "The transport cost gas should be correctly found");
+            Assert.AreEqual(0.0, energyMonth.GetFixedPrice(FixedCostType.StandingChargeGas), "The standing charge gas is not filled in, so 0.0 should be returned");
+        }
+
+        [Test()]
+        public void GetDirectlyUsedPrice()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(500, 200, 150, 200, 50, 0);
+            Tariff tariff = new Tariff(2.00, 3.00, 1.00, 4.00, 5.00);
+
+            EnergyMonth energyMonth = new EnergyMonth(date);
+            energyMonth.AddOrUpdate(consumption);
+            energyMonth.AddOrUpdate(tariff);
+
+            Assert.AreEqual(450.00, energyMonth.GetDirectlyUsedPrice(), "The Directly used price should be correctly computed");
+        }
+
+        [Test()]
+        public void GetDirectlyUsedLowPrice()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(500, 200, 150, 200, 50, 0);
+            Tariff tariff = new Tariff(2.00, 3.00, 1.00, 4.00, 5.00);
+
+            EnergyMonth energyMonth = new EnergyMonth(date);
+            energyMonth.AddOrUpdate(consumption);
+            energyMonth.AddOrUpdate(tariff);
+
+            Assert.AreEqual(75.00, energyMonth.GetDirectlyUsedLowPrice(), "The Directly used price should be correctly computed");
+        }
+
+        [Test()]
         public void GetTotalPriceTest()
         {
             DateTime date = new DateTime(2024, 10, 1);

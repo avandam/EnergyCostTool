@@ -245,6 +245,34 @@ namespace EnergyCostTool.Models.Tests
         }
 
         [Test()]
+        public void AddTariffTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Tariff tariff = new Tariff(0.1, 0.2, 0.3, 0.4, 0.5);
+            Consumption consumption = new Consumption(100, 200, 300, 400, 500, 600);
+
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+            energyMonthCollection.AddTariff(date, tariff);
+
+            Assert.AreEqual(1, energyMonthCollection.Get().Count, "There should be one EnergyMonth in the collection");
+            Assert.AreEqual(tariff, energyMonthCollection.Get()[0].Tariff, "tariff is incorrect");
+            Assert.AreEqual(consumption, energyMonthCollection.Get()[0].Consumption, "Consumption is incorrect");
+        }
+
+        [Test()]
+        public void AddTariffNoConsumptionTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Tariff tariff = new Tariff(0.1, 0.2, 0.3, 0.4, 0.5);
+
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+            energyMonthCollection.AddTariff(date, tariff);
+
+            Assert.AreEqual(0, energyMonthCollection.Get().Count, "There should be one EnergyMonth in the collection");
+        }
+
+        [Test()]
         public void DeleteEnergyMonthNonExistingTest()
         {
             EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
@@ -321,6 +349,27 @@ namespace EnergyCostTool.Models.Tests
             EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
 
             Assert.Throws<EnergyMonthNotFoundException>(() => energyMonthCollection.Get(new DateTime(2024, 11, 1)), "EnergyMonth should not have been found");
+        }
+
+        [Test()]
+        public void InjectStandardCostTest()
+        {
+            DateTime date = new DateTime(2024, 10, 1);
+            Consumption consumption = new Consumption(100, 200, 300, 400, 500, 600);
+
+            EnergyMonthCollection energyMonthCollection = new EnergyMonthCollection();
+            energyMonthCollection.AddOrUpdateEnergyMonth(date, consumption);
+
+            StandardCostCollection standardCostCollection = new StandardCostCollection();
+            standardCostCollection.AddOrUpdate(new StandardCost(new DateTime(2024, 9, 1), FixedCostType.StandingChargeElectricity, 1.00));
+            standardCostCollection.AddOrUpdate(new StandardCost(new DateTime(2024, 11, 1), FixedCostType.TransportCostElectricity, 2.00));
+            standardCostCollection.AddOrUpdate(new StandardCost(new DateTime(2024, 10, 1), FixedCostType.TransportCostGas, 3.00));
+
+            energyMonthCollection.InjectStandardCosts(standardCostCollection);
+
+            Assert.AreEqual(1.00, energyMonthCollection.Get(date).GetFixedPrice(FixedCostType.StandingChargeElectricity), "The standingChargeElectricity should be Set correctly");
+            Assert.AreEqual(0.00, energyMonthCollection.Get(date).GetFixedPrice(FixedCostType.TransportCostElectricity), "TransportCostelectritiy should not be injected, thus should be 0.0");
+            Assert.AreEqual(93.00, energyMonthCollection.Get(date).GetFixedPrice(FixedCostType.TransportCostGas), "The TransportCostGas should be Set correctly");
         }
 
     }

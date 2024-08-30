@@ -121,12 +121,15 @@ namespace EnergyCostTool.Dal
 
             foreach (EnergyConsumption energyConsumption in energyConsumptions)
             {
-                result.AddOrUpdateEnergyMonth(energyConsumption.Month, energyConsumption.ConvertToConsumption());
+                if (energyConsumption.SolarGeneration > 0)
+                {
+                    result.AddOrUpdateEnergyMonth(energyConsumption.Month, energyConsumption.ConvertToConsumption());
+                }
             }
 
             foreach (EnergyPrice energyPrice in energyPrices)
             {
-                result.UpdateEnergyMonth(energyPrice.StartDate, energyPrice.ConvertToTariff());
+                result.AddTariff(energyPrice.StartDate, energyPrice.ConvertToTariff());
             }
 
             return result;

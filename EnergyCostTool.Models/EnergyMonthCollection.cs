@@ -39,7 +39,7 @@ namespace EnergyCostTool.Models
             return energyMonths.First(energyMonth => energyMonth.Month == month);
         }
 
-        public void UpdateEnergyMonth(DateTime month, Tariff tariff)
+        public void AddTariff(DateTime month, Tariff tariff)
         {
             if (energyMonths.Exists(eMonth => eMonth.Month == month))
             {

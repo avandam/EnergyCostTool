@@ -22,14 +22,14 @@ public partial class SolarInformationWindow : Window
 
     private void ShowInformation(SolarInformationViewModel solarInformation)
     {
-        LblGenerated.Content = solarInformation.SolarGenerated;
-        LblDirectlyUsed.Content = solarInformation.SolarDirectlyUsed;
-        LblDirectlyUsedPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarDirectlyUsedPrice, 2, MidpointRounding.AwayFromZero);
-        LblReturnedNorm.Content = solarInformation.SolarReturnedNorm;
-        LblReturnedNormPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarReturnedNormPrice, 2, MidpointRounding.AwayFromZero);
-        LblReturnedLow.Content = solarInformation.SolarReturnedLow;
-        LblReturnedLowPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarReturnedLowPrice, 2, MidpointRounding.AwayFromZero);
-        LblSolarCostPrice.Content = "\u20AC " + Math.Round(solarInformation.SolarCostPrice, 2, MidpointRounding.AwayFromZero);
+        LblGenerated.Content = solarInformation.Generation;
+        LblDirectlyUsed.Content = solarInformation.DirectlyUsed;
+        LblDirectlyUsedPrice.Content = "\u20AC " + Math.Round(solarInformation.DirectlyUsedPrice, 2, MidpointRounding.AwayFromZero);
+        LblReturnedNorm.Content = solarInformation.ReturnedNorm;
+        LblReturnedNormPrice.Content = "\u20AC " + Math.Round(solarInformation.ReturnedNormPrice, 2, MidpointRounding.AwayFromZero);
+        LblReturnedLow.Content = solarInformation.ReturnedLow;
+        LblReturnedLowPrice.Content = "\u20AC " + Math.Round(solarInformation.ReturnedLowPrice, 2, MidpointRounding.AwayFromZero);
+        LblSolarCostPrice.Content = "\u20AC " + Math.Round(solarInformation.FixedCostPrice, 2, MidpointRounding.AwayFromZero);
 
         LblTotalPrice.Content = "\u20AC " + Math.Round(solarInformation.TotalPrice, 2, MidpointRounding.AwayFromZero);
         LblCostOfSolarPanels.Content = "\u20AC " + Math.Round(solarInformation.PriceOfSolarPanels, 2, MidpointRounding.AwayFromZero);
