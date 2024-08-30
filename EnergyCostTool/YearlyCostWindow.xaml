@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:EnergyCostTool"
-        xmlns:data="clr-namespace:EnergyCostTool.Data"
         xmlns:global="clr-namespace:EnergyCostTool.Converters"
         xmlns:viewModels="clr-namespace:EnergyCostTool.ViewModels"
         mc:Ignorable="d"
