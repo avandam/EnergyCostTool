@@ -57,7 +57,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnYearlyCost_OnClick(object sender, RoutedEventArgs e)
     {
-        YearlyCostWindow yearlyCostWindow = new YearlyCostWindow(null);
+        YearlyCostWindow yearlyCostWindow = new YearlyCostWindow();
         yearlyCostWindow.Closed += (_, _) => InitializeUi();
         yearlyCostWindow.Show();
     }

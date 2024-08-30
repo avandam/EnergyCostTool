@@ -1,24 +1,19 @@
-﻿using EnergyCostTool.Data;
+﻿using EnergyCostTool.Dal;
+using EnergyCostTool.Models;
+using EnergyCostTool.Models.Enumerations;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool.Logic
 {
     public static class YearlyCostCalculator
     {
-        public static YearlyCostViewModel GetYearlyCostForYear(int year, EnergyViewModel energyData)
+        public static YearlyCostViewModel GetYearlyCostForYear(int year, EnergyMonthCollection energyMonths)
         {
-            List<EnergyConsumption> energyConsumptions = energyData.EnergyConsumptionCollection.Get()
-                .FindAll(consumption => consumption.Month.Year == year);
-            List<EnergyPrice> energyPrices =
-                energyData.EnergyPriceCollection.Get().FindAll(price => price.StartDate.Year == year);
-
             YearlyCostViewModel yearlyCostViewModel = new YearlyCostViewModel(year);
-            // First compute the total usage
-            yearlyCostViewModel = ComputeTotalUsage(yearlyCostViewModel, energyConsumptions);
-            // Then compute the total price for each of the usages
-            yearlyCostViewModel = ComputeUsagePrices(yearlyCostViewModel, energyConsumptions, energyPrices);
-            // Finally get the fixed costs
-            yearlyCostViewModel = ComputeFixedCosts(yearlyCostViewModel, energyData.FixedCostCollection);
+
+            yearlyCostViewModel = ComputeTotalUsage(yearlyCostViewModel, energyMonths);
+            yearlyCostViewModel = ComputeUsagePrices(yearlyCostViewModel, energyMonths);
+            yearlyCostViewModel = ComputeFixedCosts(yearlyCostViewModel, energyMonths);
 
             // Compute totals
             yearlyCostViewModel.TotalElectricityPrice = yearlyCostViewModel.NormPrice +
@@ -27,176 +22,68 @@ namespace EnergyCostTool.Logic
                                                         yearlyCostViewModel.TransportCostElectricity +
                                                         yearlyCostViewModel.DiscountOnEnergyTax + 
                                                         yearlyCostViewModel.SolarCost;
+            yearlyCostViewModel.TotalElectricityPrice = Math.Round(yearlyCostViewModel.TotalElectricityPrice, 2);
 
-            yearlyCostViewModel.TotalGasPrice = yearlyCostViewModel.GasPrice + yearlyCostViewModel.StandingChargesGas +
+            yearlyCostViewModel.TotalGasPrice = yearlyCostViewModel.GasPrice + 
+                                                yearlyCostViewModel.StandingChargesGas +
                                                 yearlyCostViewModel.TransportCostGas;
+            yearlyCostViewModel.TotalGasPrice = Math.Round(yearlyCostViewModel.TotalGasPrice, 2);
 
-            yearlyCostViewModel.TotalPrice =
-                yearlyCostViewModel.TotalElectricityPrice + yearlyCostViewModel.TotalGasPrice;
+            yearlyCostViewModel.TotalPrice = yearlyCostViewModel.TotalElectricityPrice + 
+                                             yearlyCostViewModel.TotalGasPrice;
+            yearlyCostViewModel.TotalPrice = Math.Round(yearlyCostViewModel.TotalPrice, 2);
 
             return yearlyCostViewModel;
         }
-
-
-
+        
         private static YearlyCostViewModel ComputeTotalUsage(YearlyCostViewModel yearlyCostViewModel,
-            List<EnergyConsumption> energyConsumptions)
+            EnergyMonthCollection energyConsumptions)
         {
-            yearlyCostViewModel.NormUsed = energyConsumptions.Sum(consumption => consumption.ElectricityHigh);
-            yearlyCostViewModel.NormReturned = energyConsumptions.Sum(consumption => consumption.ReturnElectricityHigh);
-            yearlyCostViewModel.LowUsed = energyConsumptions.Sum(consumption => consumption.ElectricityLow);
-            yearlyCostViewModel.LowReturned = energyConsumptions.Sum(consumption => consumption.ReturnElectricityLow);
-            yearlyCostViewModel.GasUsed = energyConsumptions.Sum(consumption => consumption.Gas);
-            yearlyCostViewModel.SolarGenerated = energyConsumptions.Sum(consumption => consumption.SolarGeneration);
+            yearlyCostViewModel.NormUsed = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.ElectricityHigh);
+            yearlyCostViewModel.NormReturned = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityHigh);
+            yearlyCostViewModel.LowUsed = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.ElectricityLow);
+            yearlyCostViewModel.LowReturned = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.ReturnElectricityLow);
+            yearlyCostViewModel.GasUsed = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.Gas);
+            yearlyCostViewModel.SolarGenerated = energyConsumptions.Get().Sum(energyMonth => energyMonth.Consumption.SolarGeneration);
 
             return yearlyCostViewModel;
         }
 
         private static YearlyCostViewModel ComputeUsagePrices(YearlyCostViewModel yearlyCostViewModel,
-            List<EnergyConsumption> consumptions, List<EnergyPrice> prices)
+            EnergyMonthCollection energyMonths)
         {
             yearlyCostViewModel.NormPrice = 0;
             yearlyCostViewModel.LowPrice = 0;
+            
             int actualNormUsage = yearlyCostViewModel.NormUsed - yearlyCostViewModel.NormReturned;
             yearlyCostViewModel.NormPrice = actualNormUsage < 0
-                ? prices.Average(price => price.ReturnElectricityHigh) * actualNormUsage
-                : prices.Average(price => price.ElectricityHigh) * actualNormUsage;
+                ? energyMonths.Get().Average(energyMonth => energyMonth.Tariff.ReturnElectricityHigh) * actualNormUsage
+                : energyMonths.Get().Average(energyMonth => Math.Min(energyMonth.Tariff.ElectricityHigh, energyMonth.Tariff.ElectricityCap)) * actualNormUsage;
+            yearlyCostViewModel.NormPrice = Math.Round(yearlyCostViewModel.NormPrice, 2);
 
 
             int actualLowUsage = yearlyCostViewModel.LowUsed - yearlyCostViewModel.LowReturned;
             yearlyCostViewModel.LowPrice = actualLowUsage < 0
-                ? prices.Average(price => price.ReturnElectricityLow) * actualLowUsage
-                : prices.Average(price => price.ElectricityLow) * actualLowUsage;
+                ? energyMonths.Get().Average(energyMonth => energyMonth.Tariff.ReturnElectricityLow) * actualLowUsage
+                : energyMonths.Get().Average(energyMonth => Math.Min(energyMonth.Tariff.ElectricityLow, energyMonth.Tariff.ElectricityCap)) * actualLowUsage;
+            yearlyCostViewModel.LowPrice = Math.Round(yearlyCostViewModel.LowPrice, 2);
 
-            yearlyCostViewModel.GasPrice = 0;
-            foreach (EnergyConsumption energyConsumption in consumptions)
-            {
-                List<EnergyPrice> energyPricesForMonth =
-                    prices.FindAll(price => price.StartDate.Month == energyConsumption.Month.Month);
-                if (!energyPricesForMonth.Any())
-                {
-                    throw new ArgumentException($"No prices found month {energyConsumption.Month.Month}");
-                }
-                else if (energyPricesForMonth.Count() == 2)
-                {
-                    int splitDay = energyPricesForMonth[1].StartDate.Day;
-                    int lastDay = DateTime.DaysInMonth(energyPricesForMonth[1].StartDate.Year, energyPricesForMonth[1].StartDate.Month);
-                    double factor = ((double)splitDay - 1) / lastDay;
-                    int firstPartUsage = Convert.ToInt32(energyConsumption.Gas * factor);
-                    int secondPartUsage = energyConsumption.Gas - firstPartUsage;
-
-                    yearlyCostViewModel.GasPrice += firstPartUsage * Math.Min(energyPricesForMonth[0].Gas, energyPricesForMonth[0].GasCap);
-                    yearlyCostViewModel.GasPrice += secondPartUsage * Math.Min(energyPricesForMonth[1].Gas, energyPricesForMonth[1].GasCap);
-                }
-                else
-                {
-                    EnergyPrice price = energyPricesForMonth[0];
-                    yearlyCostViewModel.GasPrice += energyConsumption.Gas * Math.Min(price.Gas, price.GasCap);
-                }
-            }
+            yearlyCostViewModel.GasPrice = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.Consumption.Gas * Math.Min(energyMonth.Tariff.Gas, energyMonth.Tariff.GasCap)), 2);
 
             return yearlyCostViewModel;
         }
 
-        private static YearlyCostViewModel ComputeFixedCosts(YearlyCostViewModel yearlyCostViewModel, FixedCostCollection fixedCosts)
+        private static YearlyCostViewModel ComputeFixedCosts(YearlyCostViewModel yearlyCostViewModel, EnergyMonthCollection energyMonths)
         {
-            yearlyCostViewModel.StandingChargesElectricity = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.StandingChargeElectricity, fixedCosts);
-            yearlyCostViewModel.StandingChargesGas = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.StandingChargeGas, fixedCosts);
-            yearlyCostViewModel.TransportCostElectricity = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.TransportCostElectricity, fixedCosts);
-            yearlyCostViewModel.TransportCostGas = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.TransportCostGas, fixedCosts);
-            yearlyCostViewModel.DiscountOnEnergyTax = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.DiscountOnEnergyTax, fixedCosts);
-            yearlyCostViewModel.PayedDeposits = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.MonthlyDeposit, fixedCosts);
-            yearlyCostViewModel.SolarCost = ComputeFixedCostForType(yearlyCostViewModel.Year, FixedCostType.SolarCost, fixedCosts);
+            yearlyCostViewModel.StandingChargesElectricity = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.StandingChargeElectricity)), 2);
+            yearlyCostViewModel.StandingChargesGas = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.StandingChargeGas)), 2);
+            yearlyCostViewModel.TransportCostElectricity = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.TransportCostElectricity)), 2);
+            yearlyCostViewModel.TransportCostGas = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.TransportCostGas)), 2);
+            yearlyCostViewModel.DiscountOnEnergyTax = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.DiscountOnEnergyTax)), 2);
+            yearlyCostViewModel.PayedDeposits = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.MonthlyDeposit)), 2);
+            yearlyCostViewModel.SolarCost = Math.Round(energyMonths.Get().Sum(energyMonth => energyMonth.GetFixedPrice(FixedCostType.SolarCost)), 2);
 
             return yearlyCostViewModel;
-        }
-
-        private static double ComputeFixedCostForType(int year, FixedCostType fixedCostType,
-            FixedCostCollection fixedCostsInput)
-        {
-            List<FixedCost> fixedCosts = fixedCostsInput.Get(year, fixedCostType);
-            if (fixedCosts.Count == 0)
-            {
-                if (fixedCostType == FixedCostType.SolarCost)
-                {
-                    return 0;
-                }
-                throw new ArgumentException($"No cost found for {fixedCostType}");
-            }
-
-            switch (fixedCosts[0].TariffType)
-            {
-                case FixedCostTariffType.Daily:
-                    return ComputeFixedCostDaily(year, fixedCosts);
-                case FixedCostTariffType.Monthly:
-                    return ComputeFixedCostMonthly(year, fixedCosts);
-                case FixedCostTariffType.MonthlyCanBeZero:
-                    return ComputeFixedCostMonthlyCanBeZero(year, fixedCosts);
-                case FixedCostTariffType.Yearly:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        internal static double ComputeFixedCostMonthly(int year, List<FixedCost> fixedCosts)
-        {
-            if (fixedCosts.Count == 1)
-            {
-                return 12 * fixedCosts[0].Price;
-            }
-
-            double result = 0;
-
-            for (int i = 0; i < fixedCosts.Count - 1; i++)
-            {
-                int startMonth = fixedCosts[i].StartDate.Year < year ? 1 : fixedCosts[i].StartDate.Month;
-                int numberofMonths = fixedCosts[i + 1].StartDate.Month - startMonth;
-                result += numberofMonths * fixedCosts[i].Price;
-            }
-
-            result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
-
-            return result;
-        }
-
-        internal static double ComputeFixedCostMonthlyCanBeZero(int year, List<FixedCost> fixedCosts)
-        {
-            double result = 0;
-
-            for (int i = 0; i < fixedCosts.Count - 1; i++)
-            {
-                int startMonth = fixedCosts[i].StartDate.Year < year ? 1 : fixedCosts[i].StartDate.Month;
-                int numberofMonths = fixedCosts[i + 1].StartDate.Month - startMonth;
-                result += numberofMonths * fixedCosts[i].Price;
-            }
-
-            result += (13 - fixedCosts.Last().StartDate.Month) * fixedCosts.Last().Price;
-
-            return result;
-        }
-
-
-        internal static double ComputeFixedCostDaily(int year, List<FixedCost> fixedCosts)
-        {
-            if (fixedCosts.Count == 1)
-            {
-                int numberOfDays = DateTime.IsLeapYear(year) ? 366 : 365;
-                return numberOfDays * fixedCosts[0].Price;
-            }
-
-            double result = 0;
-
-            for (int i = 0; i < fixedCosts.Count - 1; i++)
-            {
-                TimeSpan span = fixedCosts[i + 1].StartDate.Subtract(fixedCosts[i].StartDate.Year < year ? new DateTime(year, 1, 1) : fixedCosts[i].StartDate);
-                int numberOfDays = span.Days;
-                result += numberOfDays * fixedCosts[i].Price;
-            }
-
-            TimeSpan finalSpan = new DateTime(year + 1, 1, 1).Subtract(fixedCosts.Last().StartDate);
-            result += finalSpan.Days * fixedCosts.Last().Price;
-
-            return result;
         }
     }
 }

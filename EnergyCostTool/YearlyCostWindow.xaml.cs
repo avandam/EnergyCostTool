@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using EnergyCostTool.Dal;
 using EnergyCostTool.Logic;
+using EnergyCostTool.Models;
 using EnergyCostTool.ViewModels;
 
 namespace EnergyCostTool;
@@ -10,19 +12,17 @@ namespace EnergyCostTool;
 /// </summary>
 public partial class YearlyCostWindow : Window
 {
-    private readonly EnergyViewModel energyViewModel;
     private YearlyCostViewModel yearlyCostViewModel;
     
-    public YearlyCostWindow(EnergyViewModel energyViewModel)
+    public YearlyCostWindow()
     {
         InitializeComponent();
-        this.energyViewModel = energyViewModel;
         InitializeUi();
     }
 
     private void InitializeUi()
     {
-        List<int> years = energyViewModel.EnergyConsumptionCollection.Get().Select(consumption => consumption.Month.Year).Distinct().ToList();
+        List<int> years = Database.GetEnergyYears();
         CmbYear.ItemsSource = years;
     }
 
@@ -31,7 +31,10 @@ public partial class YearlyCostWindow : Window
         try
         {
             int selectedYear = (int)((ComboBox)sender).SelectedItem;
-            yearlyCostViewModel = YearlyCostCalculator.GetYearlyCostForYear(selectedYear, energyViewModel);
+            EnergyMonthCollection energyMonths = Database.GetEnergyConsumptionForYear(selectedYear);
+            energyMonths.InjectStandardCosts(Database.GetStandardCosts());
+            yearlyCostViewModel = YearlyCostCalculator.GetYearlyCostForYear(selectedYear, energyMonths);
+
             LblNormUsed.Content = yearlyCostViewModel.NormUsed.ToString();
             LblNormReturned.Content = yearlyCostViewModel.NormReturned.ToString();
             LblNormPrice.Content = "\u20AC " + Math.Round(yearlyCostViewModel.NormPrice, 2, MidpointRounding.AwayFromZero);

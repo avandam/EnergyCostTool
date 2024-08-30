@@ -5,6 +5,21 @@ namespace EnergyCostTool.Dal
 {
     public static class Database
     {
+        public static List<int> GetEnergyYears()
+        {
+            List<EnergyConsumption> energyConsumptions;
+
+            try
+            {
+                energyConsumptions = EnergyConsumptionFileDal.Load();
+            }
+            catch // No Consumption file yet -> bypass exception
+            {
+                return new List<int>();
+            }
+            return energyConsumptions.Select(consumption => consumption.Month.Year).Distinct().ToList();
+        }
+
         public static EnergyMonthCollection GetEnergyConsumptions()
         {
             List<EnergyConsumption> energyConsumptions;
@@ -49,9 +64,9 @@ namespace EnergyCostTool.Dal
             {
                 return new EnergyMonthCollection(); 
             }   
-            List<EnergyPrice> energyPrices = [];
-
-            return ConvertToEnergyMonthCollection(energyConsumptions, energyPrices);
+            List<EnergyPrice> energyPrices = EnergyPriceFileDal.Load();
+            
+            return ConvertToConsumptionEnergyMonthCollection(energyConsumptions, energyPrices);
         }
 
         public static EnergyMonthCollection GetEnergyMonths() 
@@ -67,7 +82,7 @@ namespace EnergyCostTool.Dal
             List<EnergyConsumption> energyConsumptions = EnergyConsumptionFileDal.Load().Where(energyConsumption => energyConsumption.SolarGeneration > 0).ToList();
             List<EnergyPrice> energyPrices = EnergyPriceFileDal.Load();
 
-            return ConvertToSolarEnergyMonthCollection(energyConsumptions, energyPrices);
+            return ConvertToConsumptionEnergyMonthCollection(energyConsumptions, energyPrices);
         }
 
 
@@ -115,16 +130,13 @@ namespace EnergyCostTool.Dal
             return result;
         }
 
-        internal static EnergyMonthCollection ConvertToSolarEnergyMonthCollection(List<EnergyConsumption> energyConsumptions, List<EnergyPrice> energyPrices)
+        internal static EnergyMonthCollection ConvertToConsumptionEnergyMonthCollection(List<EnergyConsumption> energyConsumptions, List<EnergyPrice> energyPrices)
         {
             EnergyMonthCollection result = new EnergyMonthCollection();
 
             foreach (EnergyConsumption energyConsumption in energyConsumptions)
             {
-                if (energyConsumption.SolarGeneration > 0)
-                {
-                    result.AddOrUpdateEnergyMonth(energyConsumption.Month, energyConsumption.ConvertToConsumption());
-                }
+                result.AddOrUpdateEnergyMonth(energyConsumption.Month, energyConsumption.ConvertToConsumption());
             }
 
             foreach (EnergyPrice energyPrice in energyPrices)
