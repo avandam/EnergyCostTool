@@ -64,7 +64,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void BtnEnergyYearlyCost_OnClick(object sender, RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        MessageBox.Show("Per boekjaar is nog niet ondersteund.");
     }
 
     private void BtnSolarPanelFinancialResults_OnClick(object sender, RoutedEventArgs e)
