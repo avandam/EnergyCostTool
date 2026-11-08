@@ -1,0 +1,58 @@
+<Window x:Class="EnergyCostTool.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Energy Cost Tool" Height="680" Width="1200" MinHeight="520" MinWidth="900"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="#F3F6FA">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="240"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border Background="#18324B" Padding="20">
+            <StackPanel>
+                <TextBlock Text="ENERGY COST TOOL" Foreground="White" FontSize="17" FontWeight="Bold" Margin="0,4,0,28"/>
+                <TextBlock Text="Add/edit data" Foreground="#B7C7D5" FontSize="13" FontWeight="SemiBold" Margin="0,8,0,8"/>
+                <Button Content="Usage" Click="OpenUsage_Click"/>
+                <Button Content="Tariffs" Click="Placeholder_Click"/>
+                <Button Content="Fixed costs" Click="Placeholder_Click"/>
+                <TextBlock Text="Financial" Foreground="#B7C7D5" FontSize="13" FontWeight="SemiBold" Margin="0,24,0,8"/>
+                <Button Content="Per calendar year" Click="Placeholder_Click"/>
+                <Button Content="Per bookyear" Click="Placeholder_Click"/>
+                <Button Content="Solar panels" Click="Placeholder_Click"/>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Column="1" Margin="28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Text="Energy usage this year" FontSize="26" FontWeight="SemiBold" Foreground="#18324B"/>
+                <TextBlock x:Name="YearLabel" Foreground="#66788A" Margin="0,5,0,0"/>
+            </StackPanel>
+            <DataGrid x:Name="UsageGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" RowHeight="38" AlternatingRowBackground="#F6F9FC" GridLinesVisibility="Horizontal" BorderBrush="#DCE4EC">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasNegativeDirectlyUsed}" Value="True">
+                                <Setter Property="Background" Value="#FFF0E8"/>
+                                <Setter Property="Foreground" Value="#963D16"/>
+                                <Setter Property="ToolTip" Value="Legacy record: returns exceed generation. Edit values to correct or delete this record."/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Month" Binding="{Binding Month, StringFormat='MMM yyyy'}" Width="*"/>
+                    <DataGridTextColumn Header="Generation (kWh)" Binding="{Binding SolarGeneration}" Width="*"/>
+                    <DataGridTextColumn Header="Normal Return (kWh)" Binding="{Binding ReturnElectricityHigh}" Width="*"/>
+                    <DataGridTextColumn Header="Low Return (kWh)" Binding="{Binding ReturnElectricityLow}" Width="*"/>
+                    <DataGridTextColumn Header="Directly Used (kWh)" Binding="{Binding DirectlyUsed}" Width="*"/>
+                    <DataGridTextColumn Header="Normal (kWh)" Binding="{Binding ElectricityHigh}" Width="*"/>
+                    <DataGridTextColumn Header="Low (kWh)" Binding="{Binding ElectricityLow}" Width="*"/>
+                    <DataGridTextColumn Header="Gas (m³)" Binding="{Binding Gas}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock x:Name="EmptyLabel" Grid.Row="1" Text="No energy usage recorded for this year." Foreground="#66788A" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+            <TextBlock Grid.Row="2" Text="Legacy entries highlighted in orange have negative directly used energy." Foreground="#8C4A2D" Margin="0,12,0,0"/>
+        </Grid>
+    </Grid>
+</Window>
