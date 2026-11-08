@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using EnergyCostTool.Core;
 
@@ -7,11 +8,16 @@ namespace EnergyCostTool.App;
 public partial class MainWindow : Window
 {
     private readonly EnergyUsageService service;
+    private readonly string fixedCostsFilePath;
+    private readonly string fixedCostTariffTypesFilePath;
     private UsageWindow? usageWindow;
+    private FixedCostWindow? fixedCostWindow;
 
-    public MainWindow(EnergyUsageService service)
+    public MainWindow(EnergyUsageService service, string fixedCostsFilePath, string fixedCostTariffTypesFilePath)
     {
         this.service = service;
+        this.fixedCostsFilePath = fixedCostsFilePath;
+        this.fixedCostTariffTypesFilePath = fixedCostTariffTypesFilePath;
         InitializeComponent();
         YearLabel.Text = DateTime.Today.Year.ToString(CultureInfo.CurrentCulture);
         RefreshUsage();
@@ -42,6 +48,29 @@ public partial class MainWindow : Window
         if (sender is System.Windows.Controls.Button button)
         {
             MessageBox.Show($"{button.Content} will be available in a future version.", "Not implemented yet", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+
+    private void OpenFixedCosts_Click(object sender, RoutedEventArgs e)
+    {
+        if (fixedCostWindow is { IsLoaded: true })
+        {
+            fixedCostWindow.Activate();
+            return;
+        }
+
+        try
+        {
+            FixedCostService fixedCostService = new(
+                new FixedCostRepository(fixedCostsFilePath),
+                new FixedCostTariffTypeRepository(fixedCostTariffTypesFilePath));
+            fixedCostWindow = new FixedCostWindow(fixedCostService) { Owner = this };
+            fixedCostWindow.Closed += (_, _) => fixedCostWindow = null;
+            fixedCostWindow.Show();
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException)
+        {
+            MessageBox.Show($"Fixed-cost data could not be loaded.\n\n{exception.Message}", "Fixed costs", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
