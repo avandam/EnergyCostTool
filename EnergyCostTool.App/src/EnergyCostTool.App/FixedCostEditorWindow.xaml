@@ -1,0 +1,28 @@
+<Window x:Class="EnergyCostTool.App.FixedCostEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Fixed-cost entry" Height="340" Width="520" SizeToContent="Height" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="145"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Start date" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <DatePicker x:Name="StartDatePicker" Grid.Row="0" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Type" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <ComboBox x:Name="TariffTypeComboBox" Grid.Row="1" Grid.Column="1" DisplayMemberPath="Name" SelectedValuePath="Id" Margin="0,4"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Price (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="PriceTextBox" Grid.Row="2" Grid.Column="1" Margin="0,4"/>
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Cancel" IsCancel="True" MinWidth="84"/>
+            <Button Content="Save" IsDefault="True" MinWidth="84" Click="Save_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

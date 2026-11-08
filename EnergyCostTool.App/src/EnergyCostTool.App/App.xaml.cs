@@ -11,9 +11,9 @@ public partial class App : Application
         base.OnStartup(e);
         try
         {
-            AppSettings settings = AppSettings.Load();
+            EnergyCostToolSettings settings = EnergyCostToolSettings.Load();
             EnergyUsageService service = new(new EnergyUsageRepository(settings.ConsumptionFilePath));
-            MainWindow window = new(service);
+            MainWindow window = new(service, settings.FixedCostsFilePath, settings.FixedCostTariffTypesFilePath);
             MainWindow = window;
             window.Show();
         }
