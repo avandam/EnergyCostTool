@@ -1,0 +1,52 @@
+<Window x:Class="EnergyCostTool.App.UsageWindow" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        Title="Energy usage" 
+        Height="650" 
+        Width="1120" 
+        MinHeight="480" 
+        MinWidth="850" 
+        WindowStartupLocation="CenterOwner">
+  <Grid Margin="24">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <DockPanel Margin="0,0,0,16">
+      <StackPanel>
+        <TextBlock Text="Energy usage" FontSize="24" FontWeight="SemiBold" Foreground="#18324B"/>
+        <TextBlock Text="All months, newest first" Foreground="#66788A" Margin="0,4,0,0"/>
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+        <Button Content="Add" Click="Add_Click"/>
+        <Button Content="Edit selected" Click="Edit_Click"/>
+        <Button Content="Delete selected" Click="Delete_Click"/>
+        </StackPanel>
+      </DockPanel>
+    <DataGrid x:Name="UsageGrid" Grid.Row="1" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" RowHeight="36" AlternatingRowBackground="#F6F9FC" GridLinesVisibility="Horizontal" SelectionChanged="UsageGrid_SelectionChanged">
+      <DataGrid.RowStyle>
+        <Style TargetType="DataGridRow">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding HasNegativeDirectlyUsed}" Value="True">
+              <Setter Property="Background" Value="#FFF0E8"/>
+              <Setter Property="Foreground" Value="#963D16"/>
+              <Setter Property="ToolTip" Value="Legacy record: returns exceed generation. Edit values to correct or delete this record."/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </DataGrid.RowStyle>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Month" Binding="{Binding Month, StringFormat='MMM yyyy'}" Width="*"/>
+        <DataGridTextColumn Header="Generation (kWh)" Binding="{Binding SolarGeneration}" Width="*"/>
+        <DataGridTextColumn Header="Normal Return (kWh)" Binding="{Binding ReturnElectricityHigh}" Width="*"/>
+        <DataGridTextColumn Header="Low Return (kWh)" Binding="{Binding ReturnElectricityLow}" Width="*"/>
+        <DataGridTextColumn Header="Directly Used (kWh)" Binding="{Binding DirectlyUsed}" Width="*"/>
+        <DataGridTextColumn Header="Normal (kWh)" Binding="{Binding ElectricityHigh}" Width="*"/>
+        <DataGridTextColumn Header="Low (kWh)" Binding="{Binding ElectricityLow}" Width="*"/>
+        <DataGridTextColumn Header="Gas (m³)" Binding="{Binding Gas}" Width="*"/>
+      </DataGrid.Columns>
+    </DataGrid>
+    <TextBlock Grid.Row="2" Text="Legacy entries highlighted in orange have negative directly used energy." Foreground="#8C4A2D" Margin="0,12,0,0"/>
+  </Grid>
+</Window>
