@@ -10,14 +10,17 @@ public partial class MainWindow : Window
     private readonly EnergyUsageService service;
     private readonly string fixedCostsFilePath;
     private readonly string fixedCostTariffTypesFilePath;
+    private readonly string variableCostFilePath;
     private UsageWindow? usageWindow;
     private FixedCostWindow? fixedCostWindow;
+    private VariableCostWindow? variableCostWindow;
 
-    public MainWindow(EnergyUsageService service, string fixedCostsFilePath, string fixedCostTariffTypesFilePath)
+    public MainWindow(EnergyUsageService service, string fixedCostsFilePath, string fixedCostTariffTypesFilePath, string variableCostFilePath)
     {
         this.service = service;
         this.fixedCostsFilePath = fixedCostsFilePath;
         this.fixedCostTariffTypesFilePath = fixedCostTariffTypesFilePath;
+        this.variableCostFilePath = variableCostFilePath;
         InitializeComponent();
         YearLabel.Text = DateTime.Today.Year.ToString(CultureInfo.CurrentCulture);
         RefreshUsage();
@@ -71,6 +74,27 @@ public partial class MainWindow : Window
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException)
         {
             MessageBox.Show($"Fixed-cost data could not be loaded.\n\n{exception.Message}", "Fixed costs", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void OpenVariableCosts_Click(object sender, RoutedEventArgs e)
+    {
+        if (variableCostWindow is { IsLoaded: true })
+        {
+            variableCostWindow.Activate();
+            return;
+        }
+
+        try
+        {
+            VariableCostService variableCostService = new(new VariableCostRepository(variableCostFilePath));
+            variableCostWindow = new VariableCostWindow(variableCostService) { Owner = this };
+            variableCostWindow.Closed += (_, _) => variableCostWindow = null;
+            variableCostWindow.Show();
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException or System.Text.Json.JsonException)
+        {
+            MessageBox.Show($"Variable-cost data could not be loaded.\n\n{exception.Message}", "Tariffs", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

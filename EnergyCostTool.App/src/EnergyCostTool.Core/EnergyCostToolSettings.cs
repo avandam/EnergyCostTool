@@ -10,6 +10,8 @@ public sealed class EnergyCostToolSettings
 
     public string FixedCostTariffTypesFilePath { get; init; } = string.Empty;
 
+    public string VariableCostFilePath { get; init; } = string.Empty;
+
     public static EnergyCostToolSettings Load() =>
         Load(Path.Combine(AppContext.BaseDirectory, "appsettings.json"));
 
@@ -23,6 +25,7 @@ public sealed class EnergyCostToolSettings
         ValidatePath(settings.ConsumptionFilePath, nameof(ConsumptionFilePath));
         ValidatePath(settings.FixedCostsFilePath, nameof(FixedCostsFilePath));
         ValidatePath(settings.FixedCostTariffTypesFilePath, nameof(FixedCostTariffTypesFilePath));
+        ValidatePath(settings.VariableCostFilePath, nameof(VariableCostFilePath));
         return settings;
     }
 

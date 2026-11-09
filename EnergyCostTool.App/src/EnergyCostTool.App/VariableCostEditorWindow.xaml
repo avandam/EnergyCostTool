@@ -1,0 +1,49 @@
+<Window x:Class="EnergyCostTool.App.VariableCostEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Variable tariff entry" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="205"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Month" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <ComboBox x:Name="MonthComboBox" Grid.Row="0" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Year" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="YearTextBox" Grid.Row="1" Grid.Column="1" Margin="0,4"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Norm (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ElectricityHighTextBox" Grid.Row="2" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Dal (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ElectricityLowTextBox" Grid.Row="3" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Norm T kosten (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ReturnElectricityHighCostTextBox" Grid.Row="4" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Norm T vergoeding (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ReturnElectricityHighCompensationTextBox" Grid.Row="5" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Dal T kosten (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ReturnElectricityLowCostTextBox" Grid.Row="6" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="Dal T vergoeding (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="ReturnElectricityLowCompensationTextBox" Grid.Row="7" Grid.Column="1" Margin="0,4"/>
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="Gas (€)" VerticalAlignment="Center" Margin="0,6,12,6"/>
+        <TextBox x:Name="GasTextBox" Grid.Row="8" Grid.Column="1" Margin="0,4"/>
+
+        <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Cancel" IsCancel="True" MinWidth="84"/>
+            <Button Content="Save" IsDefault="True" MinWidth="84" Click="Save_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
