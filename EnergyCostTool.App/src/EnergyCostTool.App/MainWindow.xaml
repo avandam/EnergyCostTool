@@ -10,7 +10,7 @@
                 <TextBlock Text="ENERGY COST TOOL" Foreground="White" FontSize="17" FontWeight="Bold" Margin="0,4,0,28"/>
                 <TextBlock Text="Add/edit data" Foreground="#B7C7D5" FontSize="13" FontWeight="SemiBold" Margin="0,8,0,8"/>
                 <Button Content="Usage" Click="OpenUsage_Click"/>
-                <Button Content="Tariffs" Click="Placeholder_Click"/>
+                <Button Content="Tariffs" Click="OpenVariableCosts_Click"/>
                 <Button Content="Fixed costs" Click="OpenFixedCosts_Click"/>
                 <TextBlock Text="Financial" Foreground="#B7C7D5" FontSize="13" FontWeight="SemiBold" Margin="0,24,0,8"/>
                 <Button Content="Per calendar year" Click="Placeholder_Click"/>

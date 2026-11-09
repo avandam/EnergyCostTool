@@ -16,7 +16,8 @@ public sealed class EnergyCostToolSettingsTests
         {
             ConsumptionFilePath = directory.FilePath("custom-usage.dat"),
             FixedCostsFilePath = directory.FilePath("custom-fixed-costs.dat"),
-            FixedCostTariffTypesFilePath = directory.FilePath("custom-fixed-cost-types.dat")
+            FixedCostTariffTypesFilePath = directory.FilePath("custom-fixed-cost-types.dat"),
+            VariableCostFilePath = directory.FilePath("custom-variable-costs.dat")
         };
         File.WriteAllText(settingsPath, JsonSerializer.Serialize(configured));
 
@@ -29,6 +30,7 @@ public sealed class EnergyCostToolSettingsTests
         Assert.That(loaded.ConsumptionFilePath, Is.EqualTo(configured.ConsumptionFilePath));
         Assert.That(loaded.FixedCostsFilePath, Is.EqualTo(configured.FixedCostsFilePath));
         Assert.That(loaded.FixedCostTariffTypesFilePath, Is.EqualTo(configured.FixedCostTariffTypesFilePath));
+        Assert.That(loaded.VariableCostFilePath, Is.EqualTo(configured.VariableCostFilePath));
         Assert.That(File.Exists(configured.FixedCostsFilePath), Is.True);
         Assert.That(File.Exists(configured.FixedCostTariffTypesFilePath), Is.True);
     }
@@ -39,6 +41,17 @@ public sealed class EnergyCostToolSettingsTests
         using TemporaryDataDirectory directory = new();
         string settingsPath = directory.FilePath("appsettings.json");
         string json = "{\"ConsumptionFilePath\":\"usage.dat\",\"FixedCostTariffTypesFilePath\":\"types.dat\"}";
+        File.WriteAllText(settingsPath, json);
+
+        Assert.Throws<InvalidDataException>(() => EnergyCostToolSettings.Load(settingsPath));
+    }
+
+    [Test]
+    public void LoadRejectsMissingVariableCostPath()
+    {
+        using TemporaryDataDirectory directory = new();
+        string settingsPath = directory.FilePath("appsettings.json");
+        string json = "{\"ConsumptionFilePath\":\"usage.dat\",\"FixedCostsFilePath\":\"fixed.dat\",\"FixedCostTariffTypesFilePath\":\"types.dat\"}";
         File.WriteAllText(settingsPath, json);
 
         Assert.Throws<InvalidDataException>(() => EnergyCostToolSettings.Load(settingsPath));

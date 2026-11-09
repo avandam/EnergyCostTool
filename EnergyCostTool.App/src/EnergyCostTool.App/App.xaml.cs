@@ -13,7 +13,7 @@ public partial class App : Application
         {
             EnergyCostToolSettings settings = EnergyCostToolSettings.Load();
             EnergyUsageService service = new(new EnergyUsageRepository(settings.ConsumptionFilePath));
-            MainWindow window = new(service, settings.FixedCostsFilePath, settings.FixedCostTariffTypesFilePath);
+            MainWindow window = new(service, settings.FixedCostsFilePath, settings.FixedCostTariffTypesFilePath, settings.VariableCostFilePath);
             MainWindow = window;
             window.Show();
         }
